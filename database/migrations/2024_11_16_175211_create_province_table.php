@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('island_id');
             $table->string('name');
             $table->foreign('island_id')->references('id')->on('island');
+            $table->timestamps();
         });
     }
 
