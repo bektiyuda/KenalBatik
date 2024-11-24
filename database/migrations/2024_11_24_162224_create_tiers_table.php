@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('island', function (Blueprint $table) {
-            $table->id()->unique();
-            $table->string('name');
+        Schema::create('tiers', function (Blueprint $table) {
+            $table->enum('name', ['BatikPemula','BatikPenjelajah','BatikSatria','BatikJawara','BatikLegenda'])->primary();
+            $table->string('imageLink');
             $table->timestamps();
         });
     }
@@ -23,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('island');
+        Schema::dropIfExists('tiers');
     }
 };
