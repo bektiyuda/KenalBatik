@@ -20,6 +20,9 @@ Route::get('/homepage', [BatikController::class, 'index'])->name('homepage');
 //Katalog
 Route::get('/catalog', [BatikController::class, 'catalog'])->name('catalog');
 
+//Overview
+Route::get('/batik/{id}', [BatikController::class, 'overview'])->name('overview');
+
 Route::get('/healt-check', function() {
     return view('check');
 });

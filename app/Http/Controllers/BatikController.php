@@ -41,7 +41,7 @@ class BatikController extends Controller
     {
         $pulau = $request->input('pulau');
         $provinsi = $request->input('provinsi');
-        $page = $request->input('page', 1); 
+        $page = $request->input('page', 1);
 
         $limit = 9;
         $offset = ($page - 1) * $limit;
@@ -62,6 +62,26 @@ class BatikController extends Controller
 
         return Inertia::render('Catalog', [
             'batik' => $batik
+        ]);
+    }
+
+    public function overview($id)
+    {
+        $batik = DB::table('batiks')->where('id', $id)->first();
+
+        if (!$batik) {
+            return redirect('/catalog')->with('error', 'Batik tidak ditemukan.');
+        }
+
+        $relatedBatik = DB::table('batiks')
+            ->where('id', '!=', $id)
+            ->inRandomOrder()
+            ->limit(3) 
+            ->get();
+
+        return Inertia::render('batik', [
+            'batik' => $batik,
+            'relatedBatik' => $relatedBatik,
         ]);
     }
 }
