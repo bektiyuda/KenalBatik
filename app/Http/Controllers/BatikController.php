@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Batik;
+use Illuminate\Support\Facades\DB;
 
 class BatikController extends Controller
 {
@@ -38,7 +39,29 @@ class BatikController extends Controller
 
     public function catalog(Request $request)
     {
-        //Mengambil data batik sesui dengan query param pulau atau provinsi dan memberikan pagination dengan offset 9 dan limit 9
-        
+        $pulau = $request->input('pulau');
+        $provinsi = $request->input('provinsi');
+        $page = $request->input('page', 1); 
+
+        $limit = 9;
+        $offset = ($page - 1) * $limit;
+
+        $query = DB::table('batiks');
+
+        if (!is_null($pulau)) {
+            $query->where('islandId', $pulau);
+        }
+
+        if (!is_null($provinsi)) {
+            $query->where('provinceId', $provinsi);
+        }
+
+        $query->offset($offset)->limit($limit);
+
+        $batik = $query->get();
+
+        return Inertia::render('Catalog', [
+            'batik' => $batik
+        ]);
     }
 }
