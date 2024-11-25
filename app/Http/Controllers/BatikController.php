@@ -35,4 +35,10 @@ class BatikController extends Controller
 
         return redirect()->route('homepage');
     }
+
+    public function catalog(Request $request)
+    {
+        //Mengambil data batik sesui dengan query param pulau atau provinsi dan memberikan pagination dengan offset 9 dan limit 9
+        
+    }
 }
