@@ -12,6 +12,8 @@ class BatikController extends Controller
     {
         $islandId = $request->query('pulau');
 
+        $batiks = collect();
+
         if ($islandId) {
             $batiks = Batik::where('islandId', $islandId)->get();
         }
