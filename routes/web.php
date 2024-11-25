@@ -1,8 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Http\Controllers\ProvinceController;
+use App\Http\Controllers\BatikController;
+use Illuminate\Http\Request;
 
 Route::get('/', function () {
     return Inertia::render('Homepage');
@@ -31,4 +33,16 @@ Route::get('/cerita', function () {
 
 Route::get('/tentangkita', function () {
     return Inertia::render('TentangKita');
+});
+// PROVINCE
+Route::get('/provinces', [ProvinceController::class, 'index'])->name('provinces.index');
+Route::post('/provinces', [ProvinceController::class, 'store'])->name('provinces.store');
+Route::put('/provinces/{id}', [ProvinceController::class, 'update'])->name('provinces.update');
+Route::delete('/provinces/{id}', [ProvinceController::class, 'destroy'])->name('provinces.destroy');
+
+// HOMEPAGE
+Route::get('/homepage', [BatikController::class, 'index'])->name('homepage');
+
+Route::get('/healt-check', function() {
+    return view('check');
 });
