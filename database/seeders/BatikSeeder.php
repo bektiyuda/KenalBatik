@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Batik;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -599,5 +600,7 @@ class BatikSeeder extends Seeder
                 'linkImage' => "https://jjittozptnoaoseyrvcz.supabase.co/storage/v1/object/public/hology/Batik/Bali/Singa%20Barong.jpg?t=2024-10-16T09%3A56%3A03.536Z",
             ],
         ];
+
+        Batik::insert($batiks);
     }
 }

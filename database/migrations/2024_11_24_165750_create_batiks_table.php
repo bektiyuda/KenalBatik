@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('batiks', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('description');
+            $table->text('description');
             $table->string('city');
-            $table->string('tag');
+            $table->string('tag')->nullable();
             $table->foreignId('provinceId');
             $table->foreignId('islandId');
             $table->string('linkImage');
