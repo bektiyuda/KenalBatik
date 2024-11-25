@@ -6,6 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Province extends Model
 {
-    protected $table = 'province';
-    protected $fillable = ['name', 'island_id'];
+    protected $table = 'provinces';
+    protected $fillable = ['name', 'islandId'];
 }

@@ -7,7 +7,6 @@ use App\Models\Province;
 
 class ProvinceController extends Controller
 {
-    // Function untuk menampilkan semua data dan form create
     public function index()
     {
         $provinces = Province::all();
@@ -19,12 +18,12 @@ class ProvinceController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'island_id' => 'required|integer'
+            'islandId' => 'required|integer'
         ]);
 
         Province::create([
             'name' => $request->input('name'),
-            'island_id' => $request->input('island_id')
+            'islandId' => $request->input('islandId')
         ]);
 
         return redirect()->route('provinces.index')->with('success', 'Province berhasil ditambahkan.');
@@ -35,12 +34,12 @@ class ProvinceController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'island_id' => 'required|integer'
+            'islandId' => 'required|integer'
         ]);
 
         $province = Province::findOrFail($id);
         $province->name = $request->input('name');
-        $province->island_id = $request->input('island_id');
+        $province->islandId = $request->input('islandId');
         $province->save();
 
         return redirect()->route('provinces.index')->with('success', 'Province berhasil diperbarui.');
