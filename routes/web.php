@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProvinceController;
 use App\Http\Controllers\BatikController;
 use App\Http\Controllers\UserController;
+use App\Http\Middleware\AuthenticationAdmin;
+use App\Http\Middleware\AuthenticationUser;
+use Illuminate\Routing\Controllers\Middleware;
 
 Route::get('/', function () {
     return inertia('Homepage');
@@ -27,6 +30,12 @@ Route::get('/batik/{id}', [BatikController::class, 'overview'])->name('overview'
 //Register
 Route::get('/register', [UserController::class, 'registerForm'])->name('register.form');
 Route::post('/register', [UserController::class, 'register'])->name('register');
+
+//Login
+Route::post('/login', [UserController::class, 'authenticate'])->name('login');
+Route::get('login', function() {
+    return view('login');
+})->name('login');
 
 Route::get('/healt-check', function() {
     return view('check');
