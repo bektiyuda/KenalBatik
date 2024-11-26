@@ -16,11 +16,11 @@ return new class extends Migration
             $table->string('username');
             $table->string('email')->unique();
             $table->string('password');
-            $table->string('experience');
-            $table->enum('tier', ['BatikPemula','BatikPenjelajah','BatikSatria','BatikJawara','BatikLegenda']);
-            $table->boolean('isAdmin');
-            $table->string('forgotPasswordToken');
-            $table->string('forgotPasswordTokenExpired');
+            $table->integer('experience')->default(0);
+            $table->enum('tier', ['BatikPemula','BatikPenjelajah','BatikSatria','BatikJawara','BatikLegenda'])->default('BatikPemula');
+            $table->boolean('isAdmin')->default(false);
+            $table->string('forgotPasswordToken')->default('');
+            $table->time('forgotPasswordTokenExpired')->default('00:00:00');
             $table->foreign('tier')->references('name')->on('tiers');
             $table->timestamps();
         });

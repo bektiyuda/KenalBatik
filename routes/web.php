@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProvinceController;
 use App\Http\Controllers\BatikController;
+use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
     return inertia('Homepage');
@@ -22,6 +23,10 @@ Route::get('/catalog', [BatikController::class, 'catalog'])->name('catalog');
 
 //Overview
 Route::get('/batik/{id}', [BatikController::class, 'overview'])->name('overview');
+
+//Register
+Route::get('/register', [UserController::class, 'registerForm'])->name('register.form');
+Route::post('/register', [UserController::class, 'register'])->name('register');
 
 Route::get('/healt-check', function() {
     return view('check');
