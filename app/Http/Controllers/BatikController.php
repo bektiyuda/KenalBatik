@@ -12,14 +12,27 @@ class BatikController extends Controller
     {
         $islandId = $request->query('pulau');
 
+        $batiks = collect();
+
         if ($islandId) {
             $batiks = Batik::where('islandId', $islandId)->get();
         }
 
-        return Inertia::render('Homepage', [
+        return Inertia::render('Catalog', [
             'batiks' => $batiks
         ]);
     }
+
+   public function tes()
+{
+    // Ambil data Batik dari database
+    $batiks = Batik::all();
+
+    // Kirim data ke React Component melalui Inertia
+    return Inertia::render('Catalog', [
+        'batiks' => $batiks,
+    ]);
+}
 
     public function store(Request $request)
     {

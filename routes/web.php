@@ -41,7 +41,8 @@ Route::put('/provinces/{id}', [ProvinceController::class, 'update'])->name('prov
 Route::delete('/provinces/{id}', [ProvinceController::class, 'destroy'])->name('provinces.destroy');
 
 // HOMEPAGE
-Route::get('/homepage', [BatikController::class, 'index'])->name('homepage');
+Route::get('/homepag', [BatikController::class, 'index'])->name('homepage');
+Route::get('/catalog', [BatikController::class, 'index']);
 
 Route::get('/healt-check', function() {
     return view('check');

@@ -59,7 +59,7 @@ const Peta = () => {
 
                 try {
                     const response = await axios.get(
-                        `/api/batiks?island=${islandId}`
+                        `/homepage?pulau=${islandId}`
                     );
                     setBatikData(response.data.data);
                 } catch (error) {
