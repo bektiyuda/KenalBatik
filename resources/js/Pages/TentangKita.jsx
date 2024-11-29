@@ -8,7 +8,7 @@ import ppnaufal from "../Assets/ppnaufal.png";
 import pprendra from "../Assets/pprendra.png";
 import ppwildan from "../Assets/ppwildan.png";
 import Footer from "../Sections/Footer";
-import ppbekti from "../Assets/ppbekti.png" 
+import ppbekti from "../Assets/ppbekti.png";
 
 const TentangKita = () => {
     const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -55,13 +55,13 @@ const TentangKita = () => {
 
     const handleLogout = () => {
         setIsLoggedIn(false);
-        setUserData(null); 
+        setUserData(null);
         localStorage.removeItem("authToken");
         window.location.reload();
     };
 
     const handleLogin = (token) => {
-        localStorage.setItem("authToken", token); 
+        localStorage.setItem("authToken", token);
         setIsLoggedIn(true);
         fetchUserProfile(token);
         setIsLoginOpen(false);
@@ -104,7 +104,7 @@ const TentangKita = () => {
                 whileInView="visible"
                 viewport={{ once: false, amount: 0.2 }}
                 variants={quotesVariant}
-                className="w-full md:h-full my-10 lg:my-24 flex flex-col md:flex-row items-center justify-center gap-12 lg:gap-32 text-center font-vidaloka"
+                className="w-full md:h-full md:px-20 my-10 lg:my-24 grid grid-cols-1 md:grid-cols-2 lg:flex lg:flex-row items-center justify-center gap-12 lg:gap-32 text-center font-vidaloka"
             >
                 <div className="flex flex-col items-center">
                     <img
@@ -112,46 +112,41 @@ const TentangKita = () => {
                         alt="wildan"
                         className="w-[170px] h-[170px] lg:w-[220px] lg:h-[220px] rounded-full"
                     />
-                    <p className="text-2xl  mt-5">Wildan Zhafiri</p>
+                    <p className="text-2xl mt-5">Muhammad Wildan Zhafiri</p>
                     <p className="text-lg">Front-end Developer</p>
                 </div>
 
                 <div className="flex flex-col items-center">
                     <img
                         src={pprendra}
-                        width={170}
-                        height={170}
                         alt="rendra"
                         className="w-[170px] h-[170px] lg:w-[220px] lg:h-[220px] rounded-full"
                     />
-                    <p className="text-2xl mt-5">Rarendra Adi</p>
+                    <p className="text-2xl mt-5">Rarendra Adi Prabowo</p>
                     <p className="text-lg">Web Design</p>
                 </div>
 
                 <div className="flex flex-col items-center">
                     <img
                         src={ppnaufal}
-                        width={170}
-                        height={170}
                         alt="naufal"
                         className="w-[170px] h-[170px] lg:w-[220px] lg:h-[220px] rounded-full"
                     />
-                    <p className="text-2xl mt-5">Naufal Haris</p>
+                    <p className="text-2xl mt-5">Naufal Haris Rusyard</p>
                     <p className="text-lg">Back-end Developer</p>
                 </div>
 
                 <div className="flex flex-col items-center">
                     <img
                         src={ppbekti}
-                        width={170}
-                        height={170}
-                        alt="naufal"
+                        alt="bekti"
                         className="w-[170px] h-[170px] lg:w-[220px] lg:h-[220px] rounded-full"
                     />
-                    <p className="text-2xl mt-5">Naufal Haris</p>
+                    <p className="text-2xl mt-5">Bekti Yuda Adi Pratama</p>
                     <p className="text-lg">Back-end Developer</p>
                 </div>
             </motion.div>
+
             <Footer />
         </div>
     );
