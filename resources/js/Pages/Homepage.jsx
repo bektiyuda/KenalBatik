@@ -6,13 +6,13 @@ import LoginPopup from "../Components/auth/LoginPopup.jsx";
 import SignUpPopup from "../Components/auth/SignUpPopup.jsx";
 import ForgotPasswordPopup from "../Components/auth/ForgotPasswordPopup.jsx";
 import ConfirmationPopup from "../Components/ConfirmationPopup.jsx";
-import Peta from "../Sections/Peta.jsx";
+import Peta from "../sections/Peta.jsx";
 import IntroQuiz from "../Sections/IntroQuiz.jsx";
 import Navbar from "../Components/Navbar.jsx";
 import Timeline from "../Sections/Timeline.jsx";
 import { motion } from "framer-motion";
 
-function Homepage() {
+function Homepage({ batiks }) {
     const [isLoginOpen, setIsLoginOpen] = useState(false);
     const [isSignUpOpen, setIsSignUpOpen] = useState(false);
     const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
@@ -167,7 +167,7 @@ function Homepage() {
                 viewport={{ once: false, amount: 0.2 }}
                 variants={slideInFromLeft}
             >
-                <Peta />
+                <Peta batiks={batiks} />
             </motion.div>
             {/* Timeline Section - Sliding in from right */}
             <motion.div

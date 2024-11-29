@@ -13,7 +13,7 @@ const Navbar = ({ onLoginClick, onLogout, isLoggedIn, userData }) => {
     };
 
     const toggleProfil = () => {
-        setIsProfilOpen(!isProfilOpen); // Toggle drop-down profil saat profil diklik
+        setIsProfilOpen(!isProfilOpen); 
     };
 
     return (

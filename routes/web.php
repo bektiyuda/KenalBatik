@@ -22,9 +22,9 @@ Route::get('/prequiz', function () {
     return Inertia::render('PreQuiz');
 });
 
-Route::get('/overview/{id}', function ($id) {
-    return Inertia::render('Overview', ['id' => $id]);
-});
+// Route::get('/overview/{id}', function ($id) {
+//     return Inertia::render('Overview', ['id' => $id]);
+// });
 
 Route::get('/catalog', function (Request $request) {
     $pulau = $request->query('pulau');
@@ -38,6 +38,7 @@ Route::get('/cerita', function () {
 Route::get('/tentangkita', function () {
     return Inertia::render('TentangKita');
 });
+
 // PROVINCE
 Route::get('/provinces', [ProvinceController::class, 'index'])->name('provinces.index');
 Route::post('/provinces', [ProvinceController::class, 'store'])->name('provinces.store');
@@ -45,8 +46,7 @@ Route::put('/provinces/{id}', [ProvinceController::class, 'update'])->name('prov
 Route::delete('/provinces/{id}', [ProvinceController::class, 'destroy'])->name('provinces.destroy');
 
 // HOMEPAGE
-Route::get('/homepag', [BatikController::class, 'index'])->name('homepage');
-Route::get('/catalog', [BatikController::class, 'index']);
+Route::get('/homepage', [BatikController::class, 'index'])->name('homepage');
 
 //Katalog
 Route::get('/catalog', [BatikController::class, 'catalog'])->name('catalog');
@@ -63,6 +63,11 @@ Route::post('/login', [UserController::class, 'authenticate'])->name('login');
 Route::get('login', function() {
     return view('login');
 })->name('login');
+
+//Cerita
+Route::get('/cerita', function() {
+    return inertia::render('Cerita');
+});
 
 Route::get('/healt-check', function() {
     return view('check');

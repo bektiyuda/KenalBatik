@@ -1,6 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useRef } from "react";
 import { router } from "@inertiajs/react";
-import axios from "axios";
 import sumatra from "../assets/pulau/sumatra.svg";
 import jawa from "../assets/pulau/jawa.svg";
 import kalimantan from "../assets/pulau/kalimantan.svg";
@@ -11,64 +10,52 @@ import ntt from "../assets/pulau/ntt.svg";
 import bali from "../assets/pulau/bali.svg";
 import papua from "../assets/pulau/papua.svg";
 
-const Peta = () => {
+const Peta = ({ batiks = [] }) => {
     const [selectedPulau, setSelectedPulau] = useState("");
-    const [batikData, setBatikData] = useState(null);
     const [isSlideVisible, setIsSlideVisible] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
-    const getIslandId = (pulau) => {
-        switch (pulau) {
-            case "Jawa":
-                return 1;
-            case "Sumatra":
-                return 2;
-            case "Kalimantan":
-                return 3;
-            case "Sulawesi":
-                return 4;
-            case "Papua":
-                return 5;
-            case "Maluku":
-                return 6;
-            case "NTB":
-                return 7;
-            case "NTT":
-                return 8;
-            case "Bali":
-                return 9;
-            default:
-                return null;
-        }
-    };
+    const dropdownRef = useRef(null);
 
-    const handlePulauClick = async (pulau) => {
-        const islandId = getIslandId(pulau);
-
-        if (islandId === null) return;
-
+    const handlePulauClick = (pulau, islandId) => {
         if (selectedPulau === pulau) {
             setIsSlideVisible(false);
             setTimeout(() => {
                 setSelectedPulau("");
-                setBatikData(null);
+                router.get(
+                    "/homepage",
+                    {},
+                    { preserveScroll: true, preserveState: true }
+                );
             }, 300);
         } else {
+            setIsLoading(true);
             setIsSlideVisible(false);
-            setTimeout(async () => {
-                setSelectedPulau(pulau);
-
-                try {
-                    const response = await axios.get(
-                        `/homepage?pulau=${islandId}`
-                    );
-                    setBatikData(response.data.data);
-                } catch (error) {
-                    console.error("Error fetching batik data:", error);
-                    setBatikData([]);
-                } finally {
-                    setIsSlideVisible(true);
-                }
+            setTimeout(() => {
+                setSelectedPulau({name: pulau, id: islandId});
+                router.get(
+                    "/homepage",
+                    { pulau: islandId },
+                    {
+                        preserveScroll: true,
+                        preserveState: true,
+                        onSuccess: () => {
+                            setIsLoading(false);
+                            scrollToDropdown(); // Scroll otomatis ke dropdown
+                        },
+                    }
+                );
+                setIsSlideVisible(true);
             }, 300);
+        }
+    };
+
+    const scrollToDropdown = () => {
+        if (dropdownRef.current) {
+            dropdownRef.current.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+            });
         }
     };
 
@@ -96,7 +83,7 @@ const Peta = () => {
                         }`}
                         height={240}
                         width={240}
-                        onClick={() => handlePulauClick("Sumatra")}
+                        onClick={() => handlePulauClick("Sumatra", 2)}
                     />
                     <img
                         src={jawa}
@@ -108,7 +95,7 @@ const Peta = () => {
                         }`}
                         height={220}
                         width={220}
-                        onClick={() => handlePulauClick("Jawa")}
+                        onClick={() => handlePulauClick("Jawa", 1)}
                     />
                     <img
                         src={kalimantan}
@@ -120,7 +107,7 @@ const Peta = () => {
                         }`}
                         height={220}
                         width={220}
-                        onClick={() => handlePulauClick("Kalimantan")}
+                        onClick={() => handlePulauClick("Kalimantan", 3)}
                     />
                     <img
                         src={maluku}
@@ -132,7 +119,7 @@ const Peta = () => {
                         }`}
                         height={150}
                         width={150}
-                        onClick={() => handlePulauClick("Maluku")}
+                        onClick={() => handlePulauClick("Maluku", 6)}
                     />
                     <img
                         src={ntb}
@@ -144,7 +131,7 @@ const Peta = () => {
                         }`}
                         height={70}
                         width={70}
-                        onClick={() => handlePulauClick("NTB")}
+                        onClick={() => handlePulauClick("NTB", 7)}
                     />
                     <img
                         src={sulawesi}
@@ -156,7 +143,7 @@ const Peta = () => {
                         }`}
                         height={220}
                         width={220}
-                        onClick={() => handlePulauClick("Sulawesi")}
+                        onClick={() => handlePulauClick("Sulawesi", 4)}
                     />
                     <img
                         src={ntt}
@@ -168,7 +155,7 @@ const Peta = () => {
                         }`}
                         height={140}
                         width={140}
-                        onClick={() => handlePulauClick("NTT")}
+                        onClick={() => handlePulauClick("NTT", 8)}
                     />
                     <img
                         src={bali}
@@ -180,7 +167,7 @@ const Peta = () => {
                         }`}
                         height={30}
                         width={30}
-                        onClick={() => handlePulauClick("Bali")}
+                        onClick={() => handlePulauClick("Bali", 9)}
                     />
                     <img
                         src={papua}
@@ -192,7 +179,7 @@ const Peta = () => {
                         }`}
                         height={240}
                         width={240}
-                        onClick={() => handlePulauClick("Papua")}
+                        onClick={() => handlePulauClick("Papua", 5)}
                     />
                 </div>
             </div>
@@ -209,7 +196,7 @@ const Peta = () => {
                                     ? "opacity-40"
                                     : "opacity-100"
                             }`}
-                            onClick={() => handlePulauClick("Sumatra")}
+                            onClick={() => handlePulauClick("Sumatra", 2)}
                         />
                         <img
                             src={jawa}
@@ -219,7 +206,7 @@ const Peta = () => {
                                     ? "opacity-40"
                                     : "opacity-100"
                             }`}
-                            onClick={() => handlePulauClick("Jawa")}
+                            onClick={() => handlePulauClick("Jawa", 1)}
                         />
                         <img
                             src={kalimantan}
@@ -229,7 +216,7 @@ const Peta = () => {
                                     ? "opacity-40"
                                     : "opacity-100"
                             }`}
-                            onClick={() => handlePulauClick("Kalimantan")}
+                            onClick={() => handlePulauClick("Kalimantan", 3)}
                         />
                         <img
                             src={maluku}
@@ -239,7 +226,7 @@ const Peta = () => {
                                     ? "opacity-40"
                                     : "opacity-100"
                             }`}
-                            onClick={() => handlePulauClick("Maluku")}
+                            onClick={() => handlePulauClick("Maluku", 6)}
                         />
                         <img
                             src={ntb}
@@ -249,7 +236,7 @@ const Peta = () => {
                                     ? "opacity-40"
                                     : "opacity-100"
                             }`}
-                            onClick={() => handlePulauClick("NTB")}
+                            onClick={() => handlePulauClick("NTB", 7)}
                         />
                         <img
                             src={sulawesi}
@@ -259,7 +246,7 @@ const Peta = () => {
                                     ? "opacity-40"
                                     : "opacity-100"
                             }`}
-                            onClick={() => handlePulauClick("Sulawesi")}
+                            onClick={() => handlePulauClick("Sulawesi", 4)}
                         />
                         <img
                             src={ntt}
@@ -269,7 +256,7 @@ const Peta = () => {
                                     ? "opacity-40"
                                     : "opacity-100"
                             }`}
-                            onClick={() => handlePulauClick("NTT")}
+                            onClick={() => handlePulauClick("NTT", 8)}
                         />
                         <img
                             src={bali}
@@ -279,7 +266,7 @@ const Peta = () => {
                                     ? "opacity-40"
                                     : "opacity-100"
                             }`}
-                            onClick={() => handlePulauClick("Bali")}
+                            onClick={() => handlePulauClick("Bali", 9)}
                         />
                         <img
                             src={papua}
@@ -289,7 +276,7 @@ const Peta = () => {
                                     ? "opacity-40"
                                     : "opacity-100"
                             }`}
-                            onClick={() => handlePulauClick("Papua")}
+                            onClick={() => handlePulauClick("Papua", 5)}
                         />
                     </div>
                 </div>
@@ -300,54 +287,79 @@ const Peta = () => {
                 <div className="bg-[#fef1e2] w-full md:max-w-[700px] lg:max-w-[1100px] -mt-20 pb-4 pt-14 rounded-b-[30px]">
                     <div className="flex flex-wrap justify-center text-center text-lg lg:text-2xl font-vidaloka">
                         {[
-                            "Sumatra",
-                            "Jawa",
-                            "Kalimantan",
-                            "Maluku",
-                            "NTB",
-                            "Sulawesi",
-                            "NTT",
-                            "Bali",
-                            "Papua",
+                            { name: "Sumatra", id: 2 },
+                            { name: "Jawa", id: 1 },
+                            { name: "Kalimantan", id: 3 },
+                            { name: "Maluku", id: 6 },
+                            { name: "NTB", id: 7 },
+                            { name: "Sulawesi", id: 4 },
+                            { name: "NTT", id: 8 },
+                            { name: "Bali", id: 9 },
+                            { name: "Papua", id: 5 },
                         ].map((pulau) => (
                             <span
-                                key={pulau}
+                                key={pulau.id}
                                 className={`cursor-pointer mx-3 font-sofiasans ${
-                                    selectedPulau === pulau
+                                    selectedPulau === pulau.name
                                         ? "text-red-600"
                                         : ""
                                 }`}
-                                onClick={() => handlePulauClick(pulau)}
+                                onClick={() =>
+                                    handlePulauClick(pulau.name, pulau.id)
+                                }
                             >
-                                {pulau}
+                                {pulau.name}
                             </span>
                         ))}
                     </div>
                 </div>
             </div>
 
-            {/* Display batik data */}
             <div
+                ref={dropdownRef}
                 className={`overflow-hidden rounded-b-3xl w-full md:max-w-[700px] lg:max-w-[1100px] mx-auto -translate-y-6 z-0 relative transition-all duration-500 ease-in-out ${
                     isSlideVisible
                         ? "max-h-full opacity-100 bg-[#fef1e2] mt-2 py-6"
                         : "max-h-0 opacity-0"
                 }`}
             >
-                {batikData && batikData.length > 0 ? (
+                {isLoading ? (
+                    // Skeleton Loading Placeholder
+                    <div
+                        className={`grid grid-cols-1 gap-6 px-4 sm:px-6 lg:px-28 transition-opacity duration-300 ${
+                            isSlideVisible ? "opacity-100" : "opacity-0"
+                        }`}
+                    >
+                        {[1, 2, 3].map((_, index) => (
+                            <div
+                                key={index}
+                                className="flex flex-col md:flex-row items-center md:items-start mb-8 sm:mb-10 md:mb-14"
+                            >
+                                <div className="w-full md:w-1/2 mb-4 md:mb-0">
+                                    <div className="bg-gray-300 animate-pulse w-full h-56 max-w-[300px] md:max-w-[350px] lg:max-w-[400px] rounded-2xl mx-auto"></div>
+                                </div>
+                                <div className="w-full md:w-1/2 text-center md:text-left md:pl-8">
+                                    <div className="bg-gray-300 animate-pulse h-6 w-3/4 mb-4 mx-auto md:mx-0"></div>
+                                    <div className="bg-gray-300 animate-pulse h-6 w-1/2 mb-4 mx-auto md:mx-0"></div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                ) : batiks.length > 0 ? (
+                    // Display Data When Batiks Exist
                     <div className="mt-8">
                         <h2 className="text-center font-vidaloka text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-4 sm:mb-6 md:mb-8 lg:mb-10">
-                            Pulau {selectedPulau}
+                            Pulau {selectedPulau?.name || ""}
                         </h2>
                         <div className="grid grid-cols-1 gap-6 px-4 sm:px-6 lg:px-28">
-                            {batikData.slice(0, 3).map((batik, index) => (
+                            {batiks.slice(0, 3).map((batik, index) => (
                                 <div
                                     key={index}
                                     className="flex flex-col md:flex-row items-center md:items-start mb-8 sm:mb-10 md:mb-14"
                                 >
                                     <div className="w-full md:w-1/2 mb-4 md:mb-0">
                                         <img
-                                            src={batik.link_image}
+                                            src={batik.linkImage}
                                             alt={batik.name}
                                             className="rounded-2xl w-full max-h-56 max-w-[300px] md:max-w-[350px] lg:max-w-[400px] mx-auto"
                                         />
@@ -362,9 +374,7 @@ const Peta = () => {
                                         <button
                                             className="cursor-pointer px-2 py-2 rounded-xl text-white bg-[#E4676C] text-sm sm:text-base md:text-lg"
                                             onClick={() =>
-                                                router.visit(
-                                                    `/overview/${batik.id}`
-                                                )
+                                                router.get(`/batik/${batik.id}`)
                                             }
                                         >
                                             Pelajari Batik Ini Lebih Lanjut
@@ -372,17 +382,17 @@ const Peta = () => {
                                     </div>
                                 </div>
                             ))}
-                            {batikData.length > 3 && (
+                            {batiks.length > 3 && (
                                 <div className="text-center mb-5">
                                     <button
                                         className="text-base bg-[#f9d5b6] px-3 py-2 lg:text-2xl md:text-xl rounded-xl font-vidaloka"
-                                        onClick={() =>
-                                            router.visit(
-                                                `/catalog?pulau=${selectedPulau}`
-                                            )
-                                        }
+                                        onClick={() => {
+                                            router.get(
+                                                `/catalog?page=1&provinsi=&pulau=${selectedPulau.id}`
+                                            );
+                                        }}
                                     >
-                                        Klik untuk melihat batik {selectedPulau}{" "}
+                                        Klik untuk melihat batik {selectedPulau?.name || ""}{" "}
                                         lebih banyak
                                     </button>
                                 </div>
@@ -390,7 +400,10 @@ const Peta = () => {
                         </div>
                     </div>
                 ) : (
-                    <p></p>
+                    // Display If No Batiks Found
+                    <p className="text-center text-lg font-sofiasans text-gray-500">
+                        Tidak ada data batik untuk pulau {selectedPulau}.
+                    </p>
                 )}
             </div>
         </section>

@@ -128,7 +128,7 @@ const Hero = ({ isLoggedIn, onExploreClick }) => {
                 <div
                     className="-mt-[500px] md:-mt-48 lg:-mt-80 bg-cover bg-center h-[500px] md:h-[300px] lg:h-[400px] z-0"
                     style={{
-                        backgroundImage: `url(${backgroundImage})`, // Ganti dengan path gambar yang benar
+                        backgroundImage: `url(${backgroundImage})`, 
                     }}
                 ></div>
 
