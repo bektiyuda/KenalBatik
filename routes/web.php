@@ -42,6 +42,9 @@ Route::get('login', function() {
 Route::get('/quiz', [QuizController::class, 'getQuiz'])->middleware(AuthenticationUser::class)->name('quiz');
 Route::post('/check-answer', [QuizController::class, 'checkAnswer'])->name('checkanswer');
 
+//Profile
+Route::get('/profile', [UserController::class, 'profile'])->middleware(AuthenticationUser::class)->name('profile');
+
 Route::get('/healt-check', function() {
     return view('check');
 });
