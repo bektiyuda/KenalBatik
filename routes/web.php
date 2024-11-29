@@ -40,6 +40,7 @@ Route::get('login', function() {
 
 //Quiz
 Route::get('/quiz', [QuizController::class, 'getQuiz'])->middleware(AuthenticationUser::class)->name('quiz');
+Route::post('/check-answer', [QuizController::class, 'checkAnswer'])->name('checkanswer');
 
 Route::get('/healt-check', function() {
     return view('check');
