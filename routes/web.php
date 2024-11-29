@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProvinceController;
 use App\Http\Controllers\BatikController;
+use App\Http\Controllers\QuizController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\AuthenticationAdmin;
 use App\Http\Middleware\AuthenticationUser;
@@ -36,6 +37,10 @@ Route::post('/login', [UserController::class, 'authenticate'])->name('login');
 Route::get('login', function() {
     return view('login');
 })->name('login');
+
+//Quiz
+Route::get('/quiz', [QuizController::class, 'getQuiz'])->middleware(AuthenticationUser::class)->name('quiz');
+Route::post('/check-answer', [QuizController::class, 'checkAnswer'])->name('checkanswer');
 
 Route::get('/healt-check', function() {
     return view('check');
