@@ -5,6 +5,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\ProvinceController;
 use App\Http\Controllers\BatikController;
 use Illuminate\Http\Request;
+use App\Http\Controllers\QuizController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\AuthenticationAdmin;
 use App\Http\Middleware\AuthenticationUser;
@@ -64,10 +65,12 @@ Route::get('login', function() {
     return view('login');
 })->name('login');
 
-//Cerita
-Route::get('/cerita', function() {
-    return inertia::render('Cerita');
-});
+//Quiz
+Route::get('/quiz', [QuizController::class, 'getQuiz'])->middleware(AuthenticationUser::class)->name('quiz');
+Route::post('/check-answer', [QuizController::class, 'checkAnswer'])->name('checkanswer');
+
+//Profile
+Route::get('/profile', [UserController::class, 'profile'])->middleware(AuthenticationUser::class)->name('profile');
 
 Route::get('/healt-check', function() {
     return view('check');
