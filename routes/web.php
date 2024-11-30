@@ -72,6 +72,11 @@ Route::post('/check-answer', [QuizController::class, 'checkAnswer'])->name('chec
 //Profile
 Route::get('/profile', [UserController::class, 'profile'])->middleware(AuthenticationUser::class)->name('profile');
 
+//Batik
+Route::post('/create', [BatikController::class, 'create'])->middleware(AuthenticationAdmin::class)->name('batik.create');
+Route::delete('/delete/{id}', [BatikController::class, 'delete'])->middleware(AuthenticationAdmin::class)->name('batik.delete');
+Route::put('/update/{id}', [BatikController::class, 'update'])->middleware(AuthenticationAdmin::class)->name('batik.update');
+
 Route::get('/healt-check', function() {
     return view('check');
 });
