@@ -7,8 +7,8 @@
     @vite('resources/js/app.jsx')
     @inertiaHead
   </head>
-  <body>
+  <body style="background-color: #f7f2ed">
     @inertia
-    <div c id="app"></div>
+    <div id="app"></div>
   </body>
 </html>

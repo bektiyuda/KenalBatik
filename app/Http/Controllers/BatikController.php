@@ -16,13 +16,22 @@ class BatikController extends Controller
         $batiks = collect();
 
         if ($islandId) {
-            $batiks = Batik::where('islandId', $islandId)->get();
+            $batiks = Batik::where('islandId', $islandId)->get();;
         }
 
         return Inertia::render('Homepage', [
             'batiks' => $batiks
         ]);
     }
+
+   public function tes()
+{
+    $batiks = Batik::all();
+
+    return Inertia::render('Catalog', [
+        'batiks' => $batiks,
+    ]);
+}
 
     public function store(Request $request)
     {
@@ -38,48 +47,71 @@ class BatikController extends Controller
     }
 
     public function catalog(Request $request)
-    {
-        $pulau = $request->input('pulau');
-        $provinsi = $request->input('provinsi');
-        $page = $request->input('page', 1);
+{
+    $pulau = $request->input('pulau');
+    $provinsi = $request->input('provinsi');
+    $page = $request->input('page', 1);
+    
 
-        $limit = 9;
-        $offset = ($page - 1) * $limit;
+    $limit = 9;
+    $offset = ($page - 1) * $limit;
 
-        $query = DB::table('batiks');
+    $query = DB::table('batiks')
+        ->join('provinces', 'batiks.provinceId', '=', 'provinces.id')
+        ->join('islands', 'batiks.islandId', '=', 'islands.id')
+        ->select(
+            'batiks.*',
+            'provinces.name as province_name',
+            'islands.name as island_name'
+        );
 
-        if (!is_null($pulau)) {
-            $query->where('islandId', $pulau);
-        }
-
-        if (!is_null($provinsi)) {
-            $query->where('provinceId', $provinsi);
-        }
-
-        $query->offset($offset)->limit($limit);
-
-        $batik = $query->get();
-
-        return Inertia::render('Catalog', [
-            'batik' => $batik
-        ]);
+    if (!is_null($pulau)) {
+        $query->where('batiks.islandId', $pulau);
     }
+
+    if (!is_null($provinsi)) {
+        $query->where('batiks.provinceId', $provinsi);
+    }
+
+    $total = $query->count();
+    $batik = $query->offset($offset)->limit($limit)->get();
+
+    $islands = DB::table('islands')->get();
+    $provinces = DB::table('provinces')->get();
+
+    return Inertia::render('Catalog', [
+        'batik' => $batik,
+        'islands' => $islands,
+        'provinces' => $provinces,
+        'currentPage' => (int)$page,
+        'totalPages' => (int) ceil($total / $limit),
+        'selectedIsland' => $pulau,
+        'selectedProvince' => $provinsi,
+    ]);
+}
 
     public function overview($id)
     {
-        $batik = DB::table('batiks')->where('id', $id)->first();
+        $batik = DB::table('batiks')
+        ->join('provinces', 'batiks.provinceId', '=', 'provinces.id')
+        ->select('batiks.*', 'provinces.name as province_name') 
+        ->where('batiks.id', $id)
+        ->first();
+
 
         if (!$batik) {
             return redirect('/catalog')->with('error', 'Batik tidak ditemukan.');
         }
 
         $relatedBatik = DB::table('batiks')
-            ->where('id', '!=', $id)
+            ->join('provinces', 'batiks.provinceId', '=', 'provinces.id')
+            ->select('batiks.*', 'provinces.name as province_name')
+            ->where('batiks.id', '!=', $id)
             ->inRandomOrder()
-            ->limit(3) 
+            ->limit(3)
             ->get();
 
-        return Inertia::render('batik', [
+        return Inertia::render('Overview', [
             'batik' => $batik,
             'relatedBatik' => $relatedBatik,
         ]);
