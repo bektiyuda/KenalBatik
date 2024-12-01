@@ -41,8 +41,8 @@ Route::get('/tentangkita', function () {
     return Inertia::render('TentangKita');
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
+Route::get('/admin/batik', function () {
+    return view('admin-batik');
 });
 
 // Route::get('/kuis', function () {

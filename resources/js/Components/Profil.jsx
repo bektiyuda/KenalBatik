@@ -5,25 +5,24 @@ import { usePage, router } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 
 const Profil = ({ onLogout }) => {
-
     const [userData, setUserData] = useState(null);
-    
-   useEffect(() => {
-       const fetchUserProfile = async () => {
-           try {
-               const response = await axios.get("/profile"); // Panggil API
-               console.log(response);
-               setUserData(response.data); // Simpan data di state
-               setLoading(false);
-               console.log(userData)
-           } catch (error) {
-               console.error("Error fetching user profile:", error);
-               setLoading(false);
-           }
-       };
 
-       fetchUserProfile();
-   }, []);
+    useEffect(() => {
+        const fetchUserProfile = async () => {
+            try {
+                const response = await axios.get("/profile"); // Panggil API
+                console.log(response);
+                setUserData(response.data); // Simpan data di state
+                setLoading(false);
+                console.log(userData);
+            } catch (error) {
+                console.error("Error fetching user profile:", error);
+                setLoading(false);
+            }
+        };
+
+        fetchUserProfile();
+    }, []);
     // Hitung akurasi
     const totalQuiz = parseInt(userData?.total_quiz || 0);
     const totalCorrectAnswer = parseInt(userData?.total_correct_answer || 0);
@@ -108,6 +107,16 @@ const Profil = ({ onLogout }) => {
                     <p className="text-lg font-bold">{accuracy}%</p>
                 </div>
             </div>
+
+            {userData?.is_admin === 1 && (
+                <button
+                    onClick={() => (window.location.href = "/admin/batik")}
+                    className="bg-blue-500 text-white px-4 py-2 mt-3 rounded-lg w-full"
+                >
+                    Dashboard Admin
+                </button>
+            )}
+
             <button
                 onClick={handleLogout}
                 className="bg-red-500 text-white px-4 py-2 mt-3 rounded-lg w-full"
