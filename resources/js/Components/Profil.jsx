@@ -1,14 +1,55 @@
 import React from "react";
 import tier from "../assets/Tier 5.svg";
 import profil from "../assets/profil.svg";
+import { usePage, router } from "@inertiajs/react";
+import { useEffect, useState } from "react";
 
-const Profil = ({ onLogout, userData }) => {
-    // Konversi string ke integer, jika diperlukan
-    const totalQuiz = parseInt(userData.total_quiz) || 0; // Jika undefined, set 0
-    const totalCorrectAnswer = parseInt(userData.total_correct_answer) || 0; // Jika undefined, set 0
+const Profil = ({ onLogout }) => {
 
-    // Menghitung akurasi, cek jika totalQuiz > 0
-    const accuracy = totalQuiz > 0 ? (totalCorrectAnswer / totalQuiz) * 100 : 0;
+    const [userData, setUserData] = useState(null);
+    
+   useEffect(() => {
+       const fetchUserProfile = async () => {
+           try {
+               const response = await axios.get("/profile"); // Panggil API
+               console.log(response);
+               setUserData(response.data); // Simpan data di state
+               setLoading(false);
+               console.log(userData)
+           } catch (error) {
+               console.error("Error fetching user profile:", error);
+               setLoading(false);
+           }
+       };
+
+       fetchUserProfile();
+   }, []);
+    // Hitung akurasi
+    const totalQuiz = parseInt(userData?.total_quiz || 0);
+    const totalCorrectAnswer = parseInt(userData?.total_correct_answer || 0);
+    const accuracy =
+        totalQuiz > 0 ? ((totalCorrectAnswer / totalQuiz) * 100).toFixed(2) : 0;
+
+    const handleLogout = () => {
+        router.post(
+            "/logout",
+            {},
+            {
+                onSuccess: () => {
+                    console.log("Berhasil logout");
+                    onLogout(); // Update state di parent jika diperlukan
+                },
+                onError: (errors) => {
+                    console.error("Error saat logout:", errors);
+                },
+            }
+        );
+    };
+
+    const progressWidth =
+        userData?.user_experience && userData?.exp_to_next_tier
+            ? (userData?.user_experience / userData?.exp_to_next_tier) * 100
+            : 0;
 
     return (
         <div className="absolute right-0 mt-2 w-[280px] sm:w-[350px] md:w-[450px] bg-white shadow-lg rounded-lg z-50 p-3 sm:p-4 md:p-5">
@@ -23,79 +64,53 @@ const Profil = ({ onLogout, userData }) => {
                             />
                             <div>
                                 <h2 className="text-base sm:text-lg font-bold text-black">
-                                    {userData.username}
+                                    {userData?.username || "Guest"}
                                 </h2>
                                 <p className="text-xs sm:text-sm text-black">
-                                    {userData.email}
+                                    {userData?.email || "-"}
                                 </p>
                             </div>
                         </div>
                     </div>
-
-                    <div className="flex justify-center sm:justify-end gap-2 sm:gap-4 items-center my-2">
-                        <h3 className="text-sm sm:text-base md:text-lg font-semibold text-black">
-                            Batik Rookie
-                        </h3>
-                    </div>
-                    <div className="flex items-center">
-                        {/* Kontainer untuk teks dan progress bar */}
-                        <div className="flex justify-between items-center w-full">
-                            {/* Bagian teks experience */}
-                            <span className="text-xs sm:text-sm mr-2 text-black whitespace-nowrap">{`${userData.experience} / ${userData.exp_to_next_tier}`}</span>
-
-                            {/* Progress Bar */}
-                            <div className="flex-1 ml-2">
-                                <div className="w-full bg-gray-200 rounded-full h-3 sm:h-4">
-                                    {/* Pengisian progress bar berdasarkan persentase */}
-                                    <div
-                                        className="bg-[#37b991] h-3 sm:h-4 rounded-full"
-                                        style={{
-                                            width: `${
-                                                (userData.experience /
-                                                    userData.exp_to_next_tier) *
-                                                100
-                                            }%`,
-                                        }}
-                                    ></div>
-                                </div>
+                    <div className="flex items-center mt-2">
+                        <span className="text-xs sm:text-sm mr-2 text-black">{`${
+                            userData?.user_experience || 0
+                        } / ${userData?.exp_to_next_tier || 0}`}</span>
+                        <div className="flex-1 ml-2">
+                            <div className="w-full bg-gray-200 rounded-full h-3 sm:h-4">
+                                <div
+                                    className="bg-[#37b991] h-3 sm:h-4 rounded-full"
+                                    style={{ width: `${progressWidth}%` }}
+                                ></div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div className="w-full sm:basis-1/5 flex justify-center items-center sm:items-end mt-2 sm:mt-0">
                     <img
-                        src={tier}
-                        alt="Batik Rookie Badge"
+                        src={userData?.tier_photo_link}
+                        alt="Tier Badge"
                         className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16"
                     />
                 </div>
             </div>
-            {/* Stats */}
-            <div className="mt-3 sm:mt-4 bg-[#ffdfad] grid grid-cols-3 p-2 sm:p-3 md:p-4 rounded-2xl text-center text-black">
+            <div className="mt-3 bg-[#ffdfad] grid grid-cols-3 p-3 rounded-2xl text-center">
                 <div>
                     <p className="text-xs sm:text-sm">Soal Terjawab</p>
-                    <p className="text-lg sm:text-xl md:text-2xl font-vidaloka">
-                        {totalQuiz}
-                    </p>
+                    <p className="text-lg font-bold">{totalQuiz}</p>
                 </div>
                 <div>
                     <p className="text-xs sm:text-sm">Jawaban Benar</p>
-                    <p className="text-lg sm:text-xl md:text-2xl font-vidaloka">
-                        {totalCorrectAnswer}
-                    </p>
+                    <p className="text-lg font-bold">{totalCorrectAnswer}</p>
                 </div>
                 <div>
                     <p className="text-xs sm:text-sm">Akurasi Jawaban</p>
-                    <p className="text-lg sm:text-xl md:text-2xl font-vidaloka">
-                        {accuracy}%
-                    </p>{" "}
-                    {/* Menampilkan akurasi dengan 2 desimal */}
+                    <p className="text-lg font-bold">{accuracy}%</p>
                 </div>
             </div>
-            {/* Tombol Logout */}
             <button
-                onClick={onLogout}
-                className="bg-red-500 text-white px-4 py-2 mt-3 sm:mt-4 rounded-lg w-full text-sm sm:text-base font-semibold hover:bg-red-600"
+                onClick={handleLogout}
+                className="bg-red-500 text-white px-4 py-2 mt-3 rounded-lg w-full"
             >
                 Logout
             </button>

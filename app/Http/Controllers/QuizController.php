@@ -13,29 +13,36 @@ use Inertia\Inertia;
 class QuizController extends Controller
 {
     public function getQuiz()
-    {
-        $tier = Auth::user()->tier;
+{
+    $tier = Auth::user()->tier;
 
-        switch ($tier) {
-            case 'BatikPemula':
-                $quizzes = Quiz::where('difficulty', 'Easy')->inRandomOrder()->limit(5)->get();
-                break;
-            case 'BatikPenjelajah':
-                $quizzes = Quiz::where('difficulty', 'Easy')->orWhere('difficulty', 'Medium')->inRandomOrder()->limit(5)->get();
-                break;
-            case 'BatikSatria':
-                $quizzes = Quiz::where('difficulty', 'Medium')->inRandomOrder()->limit(5)->get();
-                break;
-            case 'BatikJawara':
-                $quizzes = Quiz::where('difficulty', 'Medium')->orWhere('difficulty', 'Hard')->inRandomOrder()->limit(5)->get();
-                break;
-            case 'BatikLegenda':
-                $quizzes = Quiz::where('difficulty', 'Hard')->inRandomOrder()->limit(5)->get();
-                break;
-        }
-
-        return Inertia::render('Quiz', ['quizzes' => $quizzes]);
+    // Ambil data berdasarkan tier pengguna
+    switch ($tier) {
+        case 'BatikPemula':
+            $quizzes = Quiz::where('difficulty', 'easy')->inRandomOrder()->limit(5)->get();
+            break;
+        case 'BatikPenjelajah':
+            $quizzes = Quiz::whereIn('difficulty', ['easy', 'medium'])->inRandomOrder()->limit(5)->get();
+            break;
+        case 'BatikSatria':
+            $quizzes = Quiz::where('difficulty', 'medium')->inRandomOrder()->limit(5)->get();
+            break;
+        case 'BatikJawara':
+            $quizzes = Quiz::whereIn('difficulty', ['medium', 'hard'])->inRandomOrder()->limit(5)->get();
+            break;
+        case 'BatikLegenda':
+            $quizzes = Quiz::where('difficulty', 'hard')->inRandomOrder()->limit(5)->get();
+            break;
+        default:
+            $quizzes = [];
     }
+
+    // Kembalikan data ke Inertia
+    return Inertia::render('Kuis', [
+        'quizzes' => $quizzes ?? [],
+    ]);
+}
+
 
     public function checkAnswer(Request $request)
     {
@@ -50,6 +57,8 @@ class QuizController extends Controller
             $quiz = Quiz::find($quizId[$i]);
             if($quiz->answer == $answer[$i]) {
                 $correctAnswer++;
+
+                if($user->experience < 100) {
                 switch ($quiz->difficulty) {
                     case 'Easy':
                         $user->experience += 3;
@@ -59,8 +68,12 @@ class QuizController extends Controller
                         break;
                     case 'Hard':
                         $user->experience += 7;
+                        if($user->experience > 100) {
+                            $user->experience = 100;
+                        }
                         break;
-                }
+                        }
+                    }
             }
         }
 
@@ -139,6 +152,8 @@ class QuizController extends Controller
             'total_correct_answer' => $totalCorrectAnswer,
         ];
 
-        return Inertia::render('Result', ['response' => $response]);
+        $uji = "NGETES AJA";
+
+        return response()->json($response);
     }
 }

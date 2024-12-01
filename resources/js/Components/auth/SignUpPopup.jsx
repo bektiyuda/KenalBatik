@@ -1,52 +1,69 @@
 import React, { useState } from "react";
-import axios from "axios";
-import sideImage from "../../assets/signup-image.png";
-import Logo from "../../assets/logo.svg";
-import googleImage from "../../assets/Google Logo.svg";
+import { router } from "@inertiajs/react";
+import sideImage from "../../Assets/signup-image.png";
+import Logo from "../../Assets/logo.svg";
+import googleImage from "../../Assets/Google Logo.svg";
 
-const SignUpPopup = ({ onClose }) => {
-    const [email, setEmail] = useState("");
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
+const SignUpPopup = ({ onClose, onSignUpSuccess }) => {
+    const [formData, setFormData] = useState({
+        email: "",
+        username: "",
+        password: "",
+        confirmPassword: "",
+    });
+
     const [errorMessage, setErrorMessage] = useState("");
-    const [successMessage, setSuccessMessage] = useState("");
+     const [successMessage, setSuccessMessage] = useState("");
 
-    // Handle form submit
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (password !== confirmPassword) {
-            setErrorMessage("Password dan konfirmasi password tidak sama.");
-            return;
-        }
-        try {
-            const response = await axios.post("/api/users/register", {
-                username: username,
-                email: email,
-                password: password,
-                confirm_password: confirmPassword,
-            });
-
-            // Jika sukses, reset form dan tampilkan pesan sukses
-            setSuccessMessage("Pendaftaran berhasil!");
-            setErrorMessage("");
-            setEmail("");
-            setUsername("");
-            setPassword("");
-            setConfirmPassword("");
-
-            console.log("Sign up successful:", response.data);
-        } catch (error) {
-            // Tampilkan error jika ada
-            console.error(
-                "Sign up failed:",
-                error.response ? error.response.data : error.message
-            );
-            setErrorMessage("Pendaftaran gagal, coba lagi.");
-        }
+    const handleChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value,
+        });
     };
 
-    // Tutup popup jika pengguna mengklik di luar modal
+    const handleSubmit = (e) => {
+        console.log("Form data submitted:", formData);
+        e.preventDefault();
+        if (formData.password !== formData.confirmPassword) {
+            setErrorMessage("Password dan konfirmasi password tidak cocok.");
+            return;
+        }
+
+        router.post(
+            "/register",
+            {
+                username: formData.username,
+                email: formData.email,
+                password: formData.password,
+                password_confirmation: formData.confirmPassword,
+            },
+            {
+                onSuccess: () => {
+                    setSuccessMessage(
+                        "Pendaftaran berhasil! Anda dapat masuk sekarang."
+                    );
+                    setErrorMessage("");
+                    setFormData({
+                        email: "",
+                        username: "",
+                        password: "",
+                        confirmPassword: "",
+                    });
+                    setTimeout(() => {
+                        onSignUpSuccess();
+                        onClose();
+                    }, 3000);
+                },
+                onError: (errors) => {
+                    setErrorMessage(
+                        errors.email || "Pendaftaran gagal, coba lagi."
+                    );
+                },
+            }
+        );
+    };
+
     const handleOverlayClick = (e) => {
         if (e.target.id === "overlay") {
             onClose();
@@ -106,9 +123,10 @@ const SignUpPopup = ({ onClose }) => {
                                 </label>
                                 <input
                                     type="email"
+                                    name="email"
                                     className="border rounded-lg w-full py-2 px-4 focus:outline-none focus:border-green-500"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
+                                    value={formData.email}
+                                    onChange={handleChange}
                                     required
                                 />
                             </div>
@@ -119,11 +137,10 @@ const SignUpPopup = ({ onClose }) => {
                                 </label>
                                 <input
                                     type="text"
+                                    name="username"
                                     className="border rounded-lg w-full py-2 px-4 focus:outline-none focus:border-green-500"
-                                    value={username}
-                                    onChange={(e) =>
-                                        setUsername(e.target.value)
-                                    }
+                                    value={formData.username}
+                                    onChange={handleChange}
                                     required
                                 />
                             </div>
@@ -134,11 +151,10 @@ const SignUpPopup = ({ onClose }) => {
                                 </label>
                                 <input
                                     type="password"
+                                    name="password"
                                     className="border rounded-lg w-full py-2 px-4 focus:outline-none focus:border-green-500"
-                                    value={password}
-                                    onChange={(e) =>
-                                        setPassword(e.target.value)
-                                    }
+                                    value={formData.password}
+                                    onChange={handleChange}
                                     required
                                 />
                             </div>
@@ -149,11 +165,10 @@ const SignUpPopup = ({ onClose }) => {
                                 </label>
                                 <input
                                     type="password"
+                                    name="confirmPassword"
                                     className="border rounded-lg w-full py-2 px-4 focus:outline-none focus:border-green-500"
-                                    value={confirmPassword}
-                                    onChange={(e) =>
-                                        setConfirmPassword(e.target.value)
-                                    }
+                                    value={formData.confirmPassword}
+                                    onChange={handleChange}
                                     required
                                 />
                             </div>

@@ -18,10 +18,11 @@ const Peta = ({ batiks = [] }) => {
     const dropdownRef = useRef(null);
 
     const handlePulauClick = (pulau, islandId) => {
-        if (selectedPulau === pulau) {
+        if (selectedPulau?.name === pulau) {
+            // Reset ke keadaan awal
             setIsSlideVisible(false);
             setTimeout(() => {
-                setSelectedPulau("");
+                setSelectedPulau(""); // Tidak ada pulau yang dipilih
                 router.get(
                     "/homepage",
                     {},
@@ -29,10 +30,11 @@ const Peta = ({ batiks = [] }) => {
                 );
             }, 300);
         } else {
+            // Pilih pulau baru
             setIsLoading(true);
             setIsSlideVisible(false);
             setTimeout(() => {
-                setSelectedPulau({name: pulau, id: islandId});
+                setSelectedPulau({ name: pulau, id: islandId }); // Set pulau terpilih
                 router.get(
                     "/homepage",
                     { pulau: islandId },
@@ -49,6 +51,7 @@ const Peta = ({ batiks = [] }) => {
             }, 300);
         }
     };
+
 
     const scrollToDropdown = () => {
         if (dropdownRef.current) {
@@ -76,10 +79,10 @@ const Peta = ({ batiks = [] }) => {
                     <img
                         src={sumatra}
                         alt="sumatra"
-                        className={`absolute top-20 left-10 transition-all duration-500 ease-in-out transform hover:scale-110 hover:opacity-100 ${
-                            selectedPulau && selectedPulau !== "Sumatra"
-                                ? "opacity-40"
-                                : "opacity-100"
+                        className={`absolute top-20 left-10 transition-all duration-500 ease-in-out transform hover:scale-110 ${
+                            selectedPulau?.name === "Sumatra" || !selectedPulau
+                                ? "opacity-100"
+                                : "opacity-40"
                         }`}
                         height={240}
                         width={240}
@@ -88,10 +91,10 @@ const Peta = ({ batiks = [] }) => {
                     <img
                         src={jawa}
                         alt="jawa"
-                        className={`absolute left-[250px] bottom-9 transition-all duration-500 ease-in-out transform hover:scale-110 hover:opacity-100 ${
-                            selectedPulau && selectedPulau !== "Jawa"
-                                ? "opacity-40"
-                                : "opacity-100"
+                        className={`absolute left-[250px] bottom-9 transition-all duration-500 ease-in-out transform hover:scale-110 ${
+                            selectedPulau?.name === "Jawa" || !selectedPulau
+                                ? "opacity-100"
+                                : "opacity-40"
                         }`}
                         height={220}
                         width={220}
@@ -101,9 +104,10 @@ const Peta = ({ batiks = [] }) => {
                         src={kalimantan}
                         alt="kalimantan"
                         className={`absolute top-[70px] left-[340px] transition-all duration-500 ease-in-out transform hover:scale-110 hover:opacity-100 ${
-                            selectedPulau && selectedPulau !== "Kalimantan"
-                                ? "opacity-40"
-                                : "opacity-100"
+                            selectedPulau?.name === "Kalimantan" ||
+                            !selectedPulau
+                                ? "opacity-100"
+                                : "opacity-40"
                         }`}
                         height={220}
                         width={220}
@@ -113,9 +117,9 @@ const Peta = ({ batiks = [] }) => {
                         src={maluku}
                         alt="maluku"
                         className={`absolute right-[250px] top-32 transition-all duration-500 ease-in-out transform hover:scale-110 hover:opacity-100 ${
-                            selectedPulau && selectedPulau !== "Maluku"
-                                ? "opacity-40"
-                                : "opacity-100"
+                            selectedPulau?.name === "Maluku" || !selectedPulau
+                                ? "opacity-100"
+                                : "opacity-40"
                         }`}
                         height={150}
                         width={150}
@@ -125,9 +129,9 @@ const Peta = ({ batiks = [] }) => {
                         src={ntb}
                         alt="ntb"
                         className={`absolute left-[500px] bottom-[83px] transition-all duration-500 ease-in-out transform hover:scale-110 hover:opacity-100 ${
-                            selectedPulau && selectedPulau !== "NTB"
-                                ? "opacity-40"
-                                : "opacity-100"
+                            selectedPulau?.name === "NTB" || !selectedPulau
+                                ? "opacity-100"
+                                : "opacity-40"
                         }`}
                         height={70}
                         width={70}
@@ -137,9 +141,9 @@ const Peta = ({ batiks = [] }) => {
                         src={sulawesi}
                         alt="sulawesi"
                         className={`absolute right-[360px] top-[100px] transition-all duration-500 ease-in-out transform hover:scale-110 hover:opacity-100 ${
-                            selectedPulau && selectedPulau !== "Sulawesi"
-                                ? "opacity-40"
-                                : "opacity-100"
+                            selectedPulau?.name === "Sulawesi" || !selectedPulau
+                                ? "opacity-100"
+                                : "opacity-40"
                         }`}
                         height={220}
                         width={220}
@@ -149,9 +153,9 @@ const Peta = ({ batiks = [] }) => {
                         src={ntt}
                         alt="ntt"
                         className={`absolute right-[400px] bottom-9 transition-all duration-500 ease-in-out transform hover:scale-110 hover:opacity-100 ${
-                            selectedPulau && selectedPulau !== "NTT"
-                                ? "opacity-40"
-                                : "opacity-100"
+                            selectedPulau?.name === "NTT" || !selectedPulau
+                                ? "opacity-100"
+                                : "opacity-40"
                         }`}
                         height={140}
                         width={140}
@@ -161,9 +165,9 @@ const Peta = ({ batiks = [] }) => {
                         src={bali}
                         alt="bali"
                         className={`absolute left-[470px] bottom-[105px] transition-all duration-500 ease-in-out transform hover:scale-110 hover:opacity-100 ${
-                            selectedPulau && selectedPulau !== "Bali"
-                                ? "opacity-40"
-                                : "opacity-100"
+                            selectedPulau?.name === "Bali" || !selectedPulau
+                                ? "opacity-100"
+                                : "opacity-40"
                         }`}
                         height={30}
                         width={30}
@@ -173,9 +177,9 @@ const Peta = ({ batiks = [] }) => {
                         src={papua}
                         alt="papua"
                         className={`absolute right-10 bottom-[100px] transition-all duration-500 ease-in-out transform hover:scale-110 hover:opacity-100 ${
-                            selectedPulau && selectedPulau !== "Papua"
-                                ? "opacity-40"
-                                : "opacity-100"
+                            selectedPulau?.name === "Papua" || !selectedPulau
+                                ? "opacity-100"
+                                : "opacity-40"
                         }`}
                         height={240}
                         width={240}
@@ -192,9 +196,10 @@ const Peta = ({ batiks = [] }) => {
                             src={sumatra}
                             alt="sumatra"
                             className={`transition-all duration-500 ease-in-out transform hover:scale-110 hover:opacity-100 cursor-pointer ${
-                                selectedPulau && selectedPulau !== "Sumatra"
-                                    ? "opacity-40"
-                                    : "opacity-100"
+                                selectedPulau?.name === "Sumatra" ||
+                                !selectedPulau
+                                    ? "opacity-100"
+                                    : "opacity-40"
                             }`}
                             onClick={() => handlePulauClick("Sumatra", 2)}
                         />
@@ -202,9 +207,9 @@ const Peta = ({ batiks = [] }) => {
                             src={jawa}
                             alt="jawa"
                             className={`transition-all duration-500 ease-in-out transform hover:scale-110 hover:opacity-100 cursor-pointer ${
-                                selectedPulau && selectedPulau !== "Jawa"
-                                    ? "opacity-40"
-                                    : "opacity-100"
+                                selectedPulau?.name === "Jawa" || !selectedPulau
+                                    ? "opacity-100"
+                                    : "opacity-40"
                             }`}
                             onClick={() => handlePulauClick("Jawa", 1)}
                         />
@@ -212,9 +217,10 @@ const Peta = ({ batiks = [] }) => {
                             src={kalimantan}
                             alt="kalimantan"
                             className={`transition-all duration-500 ease-in-out transform hover:scale-110 hover:opacity-100 cursor-pointer ${
-                                selectedPulau && selectedPulau !== "Kalimantan"
-                                    ? "opacity-40"
-                                    : "opacity-100"
+                                selectedPulau?.name === "Kalimantan" ||
+                                !selectedPulau
+                                    ? "opacity-100"
+                                    : "opacity-40"
                             }`}
                             onClick={() => handlePulauClick("Kalimantan", 3)}
                         />
@@ -222,9 +228,10 @@ const Peta = ({ batiks = [] }) => {
                             src={maluku}
                             alt="maluku"
                             className={`transition-all duration-500 ease-in-out transform hover:scale-110 hover:opacity-100 cursor-pointer ${
-                                selectedPulau && selectedPulau !== "Maluku"
-                                    ? "opacity-40"
-                                    : "opacity-100"
+                                selectedPulau?.name === "Maluku" ||
+                                !selectedPulau
+                                    ? "opacity-100"
+                                    : "opacity-40"
                             }`}
                             onClick={() => handlePulauClick("Maluku", 6)}
                         />
@@ -232,9 +239,9 @@ const Peta = ({ batiks = [] }) => {
                             src={ntb}
                             alt="ntb"
                             className={`transition-all duration-500 ease-in-out transform hover:scale-110 hover:opacity-100 cursor-pointer ${
-                                selectedPulau && selectedPulau !== "NTB"
-                                    ? "opacity-40"
-                                    : "opacity-100"
+                                selectedPulau?.name === "NTB" || !selectedPulau
+                                    ? "opacity-100"
+                                    : "opacity-40"
                             }`}
                             onClick={() => handlePulauClick("NTB", 7)}
                         />
@@ -242,9 +249,10 @@ const Peta = ({ batiks = [] }) => {
                             src={sulawesi}
                             alt="sulawesi"
                             className={`transition-all duration-500 ease-in-out transform hover:scale-110 hover:opacity-100 cursor-pointer ${
-                                selectedPulau && selectedPulau !== "Sulawesi"
-                                    ? "opacity-40"
-                                    : "opacity-100"
+                                selectedPulau?.name === "Sulawesi" ||
+                                !selectedPulau
+                                    ? "opacity-100"
+                                    : "opacity-40"
                             }`}
                             onClick={() => handlePulauClick("Sulawesi", 4)}
                         />
@@ -252,9 +260,9 @@ const Peta = ({ batiks = [] }) => {
                             src={ntt}
                             alt="ntt"
                             className={`transition-all duration-500 ease-in-out transform hover:scale-110 hover:opacity-100 cursor-pointer ${
-                                selectedPulau && selectedPulau !== "NTT"
-                                    ? "opacity-40"
-                                    : "opacity-100"
+                                selectedPulau?.name === "NTT" || !selectedPulau
+                                    ? "opacity-100"
+                                    : "opacity-40"
                             }`}
                             onClick={() => handlePulauClick("NTT", 8)}
                         />
@@ -262,9 +270,9 @@ const Peta = ({ batiks = [] }) => {
                             src={bali}
                             alt="bali"
                             className={`transition-all duration-500 ease-in-out transform hover:scale-110 hover:opacity-100 cursor-pointer ${
-                                selectedPulau && selectedPulau !== "Bali"
-                                    ? "opacity-40"
-                                    : "opacity-100"
+                                selectedPulau?.name === "Bali" || !selectedPulau
+                                    ? "opacity-100"
+                                    : "opacity-40"
                             }`}
                             onClick={() => handlePulauClick("Bali", 9)}
                         />
@@ -272,9 +280,10 @@ const Peta = ({ batiks = [] }) => {
                             src={papua}
                             alt="papua"
                             className={`transition-all duration-500 ease-in-out transform hover:scale-110 hover:opacity-100 cursor-pointer ${
-                                selectedPulau && selectedPulau !== "Papua"
-                                    ? "opacity-40"
-                                    : "opacity-100"
+                                selectedPulau?.name === "Papua" ||
+                                !selectedPulau
+                                    ? "opacity-100"
+                                    : "opacity-40"
                             }`}
                             onClick={() => handlePulauClick("Papua", 5)}
                         />
@@ -300,9 +309,9 @@ const Peta = ({ batiks = [] }) => {
                             <span
                                 key={pulau.id}
                                 className={`cursor-pointer mx-3 font-sofiasans ${
-                                    selectedPulau === pulau.name
+                                    selectedPulau?.name === pulau.name
                                         ? "text-red-600"
-                                        : ""
+                                        : "text-gray-700"
                                 }`}
                                 onClick={() =>
                                     handlePulauClick(pulau.name, pulau.id)
@@ -392,8 +401,8 @@ const Peta = ({ batiks = [] }) => {
                                             );
                                         }}
                                     >
-                                        Klik untuk melihat batik {selectedPulau?.name || ""}{" "}
-                                        lebih banyak
+                                        Klik untuk melihat batik{" "}
+                                        {selectedPulau?.name || ""} lebih banyak
                                     </button>
                                 </div>
                             )}

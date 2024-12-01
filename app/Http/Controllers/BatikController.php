@@ -6,23 +6,25 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Batik;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class BatikController extends Controller
 {
-    public function index(Request $request)
-    {
-        $islandId = $request->query('pulau');
+   public function index(Request $request)
+{
+    $islandId = $request->query('pulau');
+    $batiks = Batik::all(); // Contoh data
 
-        $batiks = collect();
-
-        if ($islandId) {
+    if ($islandId) {
             $batiks = Batik::where('islandId', $islandId)->get();;
         }
+    $authToken = session('authToken');
 
-        return Inertia::render('Homepage', [
-            'batiks' => $batiks
-        ]);
-    }
+    return Inertia::render('Homepage', [
+        'batiks' => $batiks,
+        'authToken' => $authToken,
+    ]);
+}
 
    public function tes()
 {
@@ -83,7 +85,7 @@ class BatikController extends Controller
         'batik' => $batik,
         'islands' => $islands,
         'provinces' => $provinces,
-        'currentPage' => (int)$page,
+        'currentPage' => (int) $page,
         'totalPages' => (int) ceil($total / $limit),
         'selectedIsland' => $pulau,
         'selectedProvince' => $provinsi,
