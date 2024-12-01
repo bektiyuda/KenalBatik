@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Quiz;
 use App\Models\User;
 use App\Models\UserAnswer;
+use App\Services\SupabaseService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -46,9 +47,9 @@ class QuizController extends Controller
 
         $correctAnswer = 0;
 
-        for($i = 0; $i < count($quizId); $i++) {
+        for ($i = 0; $i < count($quizId); $i++) {
             $quiz = Quiz::find($quizId[$i]);
-            if($quiz->answer == $answer[$i]) {
+            if ($quiz->answer == $answer[$i]) {
                 $correctAnswer++;
                 switch ($quiz->difficulty) {
                     case 'Easy':
@@ -86,22 +87,22 @@ class QuizController extends Controller
         $user->save();
 
         $userProfile = DB::table('users')
-        ->leftJoin('tiers', 'users.tier', '=', 'tiers.name')
-        ->leftJoin('user_answers', 'users.id', '=', 'user_answers.userId')
-        ->select(
-            'users.id as user_id',
-            'users.username',
-            'users.email',
-            'users.experience',
-            'users.tier as user_tier',
-            'tiers.imageLink as tier_image_link',
-            'user_answers.quizId',
-            'user_answers.userAnswer',
-            'user_answers.totalCorrectAnswer',
-            'user_answers.created_at as answer_created_at'
-        )
-        ->where('users.id', $user->id)
-        ->get();
+            ->leftJoin('tiers', 'users.tier', '=', 'tiers.name')
+            ->leftJoin('user_answers', 'users.id', '=', 'user_answers.userId')
+            ->select(
+                'users.id as user_id',
+                'users.username',
+                'users.email',
+                'users.experience',
+                'users.tier as user_tier',
+                'tiers.imageLink as tier_image_link',
+                'user_answers.quizId',
+                'user_answers.userAnswer',
+                'user_answers.totalCorrectAnswer',
+                'user_answers.created_at as answer_created_at'
+            )
+            ->where('users.id', $user->id)
+            ->get();
 
 
         switch ($user->tier) {
@@ -124,7 +125,7 @@ class QuizController extends Controller
 
         $totalCorrectAnswer = 0;
 
-        for($i = 0; $i < count($userProfile); $i++) {
+        for ($i = 0; $i < count($userProfile); $i++) {
             $totalCorrectAnswer += $userProfile[$i]->totalCorrectAnswer;
         }
 
@@ -140,5 +141,85 @@ class QuizController extends Controller
         ];
 
         return Inertia::render('Result', ['response' => $response]);
+    }
+
+    public function create(Request $request, SupabaseService $supabaseService)
+    {
+        $validatedData = $request->validate([
+            'question' => 'required|string',
+            'optionA' => 'required|string',
+            'optionB' => 'required|string',
+            'optionC' => 'required|string',
+            'optionD' => 'required|string',
+            'answer' => 'required|string',
+            'difficulty' => 'required|in:Easy,Medium,Hard',
+            'image' => 'required|file|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        $imagePath = $request->file('image')->getPathname();
+        $imageName = $request->file('image')->getClientOriginalName();
+        $imageUrl = $supabaseService->uploadFile($imagePath, $imageName);
+
+        Quiz::create([
+            'question' => $validatedData['question'],
+            'optionA' => $validatedData['optionA'],
+            'optionB' => $validatedData['optionB'],
+            'optionC' => $validatedData['optionC'],
+            'optionD' => $validatedData['optionD'],
+            'answer' => $validatedData['answer'],
+            'difficulty' => $validatedData['difficulty'],
+            'imageLink' => $imageUrl,
+        ]);
+
+        return redirect()->route('adminQuiz')->with('success', 'Quiz created successfully!');
+    }
+
+    public function delete($id)
+    {
+        $quiz = Quiz::find($id);
+        $quiz->delete();
+
+        return redirect()->route('adminQuiz')->with('success', 'Quiz deleted successfully!');
+    }
+
+    public function update(Request $request, SupabaseService $supabaseService, $id)
+    {
+        $validatedData = $request->validate([
+            'question' => 'required|string',
+            'optionA' => 'required|string',
+            'optionB' => 'required|string',
+            'optionC' => 'required|string',
+            'optionD' => 'required|string',
+            'answer' => 'required|string',
+            'difficulty' => 'required|in:Easy,Medium,Hard',
+            'image' => 'nullable|file|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        $quiz = Quiz::findOrFail($id);
+
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->getPathname();
+            $imageName = $request->file('image')->getClientOriginalName();
+            $imageUrl = $supabaseService->uploadFile($imagePath, $imageName);
+
+            $quiz->imageLink = $imageUrl;
+        }
+
+        $quiz->question = $validatedData['question'];
+        $quiz->optionA = $validatedData['optionA'];
+        $quiz->optionB = $validatedData['optionB'];
+        $quiz->optionC = $validatedData['optionC'];
+        $quiz->optionD = $validatedData['optionD'];
+        $quiz->answer = $validatedData['answer'];
+        $quiz->difficulty = $validatedData['difficulty'];
+        $quiz->save();
+
+        return redirect()->route('adminQuiz')->with('success', 'Quiz updated successfully!');
+    }
+
+    public function index()
+    {
+        $quizzes = Quiz::all();
+        return view('adminQuiz', compact('quizzes'));
     }
 }

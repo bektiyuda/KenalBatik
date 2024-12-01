@@ -68,6 +68,11 @@ Route::get('login', function() {
 //Quiz
 Route::get('/quiz', [QuizController::class, 'getQuiz'])->middleware(AuthenticationUser::class)->name('quiz');
 Route::post('/check-answer', [QuizController::class, 'checkAnswer'])->name('checkanswer');
+//Crud Quiz
+Route::get('/adminQuiz', [QuizController::class, 'index'])->name('adminQuiz');
+Route::post('/quiz/create', [QuizController::class, 'create'])->name('quiz.create');
+Route::post('/quiz/update/{id}', [QuizController::class, 'update'])->name('quiz.update');
+Route::delete('/quiz/delete/{id}', [QuizController::class, 'delete'])->name('quiz.delete');
 
 //Profile
 Route::get('/profile', [UserController::class, 'profile'])->middleware(AuthenticationUser::class)->name('profile');
