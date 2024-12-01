@@ -73,10 +73,20 @@ Route::post('/check-answer', [QuizController::class, 'checkAnswer'])->name('chec
 Route::get('/profile', [UserController::class, 'profile'])->middleware(AuthenticationUser::class)->name('profile');
 
 //Batik
-Route::post('/create', [BatikController::class, 'create'])->middleware(AuthenticationAdmin::class)->name('batik.create');
-Route::delete('/delete/{id}', [BatikController::class, 'delete'])->middleware(AuthenticationAdmin::class)->name('batik.delete');
-Route::put('/update/{id}', [BatikController::class, 'update'])->middleware(AuthenticationAdmin::class)->name('batik.update');
+Route::get('/admin/batik/create', [BatikController::class, 'createDashboard'])->name('batik.create');
+Route::post('/create', [BatikController::class, 'create'])->name('batik.store');
+Route::delete('/delete/{id}', [BatikController::class, 'delete'])->name('batik.delete');
+
+Route::get('/admin/batik/{id}/edit', [BatikController::class, 'updateDashboard'])->name('batik.edit');
+Route::put('/update/{id}', [BatikController::class, 'update'])->name('batik.update');
 
 Route::get('/healt-check', function() {
     return view('check');
 });
+
+Route::get('/admin', function() {
+    return view('admin');
+})->name('admin');
+
+Route::get('/admin/quiz', [QuizController::class, 'index'])->name('quiz.index');
+Route::get('/admin/batik', [BatikController::class, 'manageBatik'])->name('batik.manage');
