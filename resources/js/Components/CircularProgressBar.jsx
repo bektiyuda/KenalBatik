@@ -1,9 +1,13 @@
 import React from "react";
 
 const CircularProgressBar = ({ accuracy }) => {
-    const radius = 45;
-    const circumference = 2 * Math.PI * radius;
-    const progress = (accuracy / 100) * circumference;
+    const radius = 45; // Radius lingkaran
+    const circumference = 2 * Math.PI * radius; // Keliling lingkaran
+
+    // Pastikan nilai `accuracy` valid (angka) dan di dalam rentang 0 - 100
+    const validAccuracy =
+        isNaN(accuracy) || accuracy < 0 ? 0 : Math.min(accuracy, 100);
+    const progress = (validAccuracy / 100) * circumference;
 
     return (
         <div className="flex justify-center items-center">
@@ -25,7 +29,7 @@ const CircularProgressBar = ({ accuracy }) => {
                     cx="50"
                     cy="50"
                     r={radius}
-                    stroke="#e4666c"
+                    stroke="#6A5AE0"
                     strokeWidth="8"
                     fill="none"
                     strokeDasharray={circumference}
@@ -41,7 +45,7 @@ const CircularProgressBar = ({ accuracy }) => {
                     className="text-2xl font-bold items-center"
                     fill="#000000"
                 >
-                    {accuracy}%
+                    {validAccuracy}%
                 </text>
             </svg>
         </div>

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { router } from "@inertiajs/react";
 import { motion } from "framer-motion";
 import LoginPopup from "../Components/auth/LoginPopup";
-import SignUpPopup from "../components/auth/SignUpPopup";
+import SignUpPopup from "../Components/auth/SignUpPopup";
 import ForgotPasswordPopup from "../Components/auth/ForgotPasswordPopup";
 import Navbar from "../Components/Navbar";
 import Footer from "../Sections/Footer";
@@ -97,7 +97,7 @@ const Catalog = ({
     };
 
     const quotesVariant = {
-        hidden: { opacity: 0, y: 100 },
+        hidden: { opacity: 0, y: 40 },
         visible: {
             opacity: 1,
             y: 0,
@@ -112,13 +112,15 @@ const Catalog = ({
     }, []);
 
     return (
-        <section className="w-full">
-            <Navbar
-                onLoginClick={toggleLoginPopup}
-                isLoggedIn={isLoggedIn}
-                onLogout={handleLogout}
-                userData={userData}
-            />
+        <section className="w-full relative">
+            <div className="w-full fixed top-0 z-5">
+                <Navbar
+                    onLoginClick={toggleLoginPopup}
+                    isLoggedIn={isLoggedIn}
+                    onLogout={handleLogout}
+                    userData={userData}
+                />
+            </div>
             {isLoginOpen && (
                 <LoginPopup
                     onClose={toggleLoginPopup}
@@ -137,131 +139,140 @@ const Catalog = ({
                 whileInView="visible"
                 viewport={{ once: false, amount: 0.2 }}
                 variants={quotesVariant}
-                className="max-w-full mb-10 font-vidaloka mx-4 sm:mx-8 md:mx-16 lg:mx-32 xl:mx-48"
             >
-                <h2 className="text-center text-2xl md:text-5xl lg:text-6xl mt-6 md:mt-10">
-                    Koleksi Batik Indonesia
-                </h2>
-                <p className="text-center md:text-2xl lg:text-3xl mb-10">
-                    Temukan Keunikan Setiap Motif
-                </p>
+                <div className="max-w-full py-20 mb-10 font-vidaloka mx-4 sm:mx-8 md:mx-16 lg:mx-32 xl:mx-48">
+                    <h2 className="text-center text-2xl md:text-5xl lg:text-6xl mt-6 md:mt-10">
+                        Koleksi Batik Indonesia
+                    </h2>
+                    <p className="text-center md:text-2xl lg:text-3xl mb-10">
+                        Temukan Keunikan Setiap Motif
+                    </p>
 
-                {/* Filter Section */}
-                <div className="flex justify-center gap-4 mb-6">
-                    <select
-                        value={selectedIsland || ""}
-                        onChange={(e) => {
-                            const value = e.target.value;
-                            handleFilterChange(value, "");
-                        }}
-                        className="border p-2 rounded"
-                    >
-                        <option value="">Semua Pulau</option>
-                        {islands.map((island) => (
-                            <option key={island.id} value={island.id}>
-                                {island.name}
-                            </option>
-                        ))}
-                    </select>
-
-                    <select
-                        value={selectedProvince || ""}
-                        onChange={(e) => {
-                            const value = e.target.value;
-                            handleFilterChange(selectedIsland, value);
-                        }}
-                        className="border p-2 rounded"
-                    >
-                        <option value="">Semua Provinsi</option>
-                        {provinces
-                            .filter(
-                                (province) =>
-                                    !selectedIsland ||
-                                    province.islandId ===
-                                        parseInt(selectedIsland)
-                            )
-                            .map((province) => (
-                                <option key={province.id} value={province.id}>
-                                    {province.name}
+                    {/* Filter Section */}
+                    <div className="flex justify-center gap-4 mb-6">
+                        <select
+                            value={selectedIsland || ""}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                handleFilterChange(value, "");
+                            }}
+                            className="border p-2 rounded"
+                        >
+                            <option value="">Semua Pulau</option>
+                            {islands.map((island) => (
+                                <option key={island.id} value={island.id}>
+                                    {island.name}
                                 </option>
                             ))}
-                    </select>
-                </div>
+                        </select>
 
-                {/* Display Filtered Batiks */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {batik.length > 0 ? (
-                        batik.map((item, index) => (
-                            <div
-                                key={index}
-                                className="cursor-pointer"
-                                onClick={() => router.get(`/batik/${item.id}`)}
-                            >
-                                <img
-                                    src={item.linkImage}
-                                    alt={`gambar-${item.name}`}
-                                    className="w-full rounded-2xl h-64 md:h-52 xl:h-60 object-cover"
-                                />
-                                <h3 className="mt-5 text-2xl sm:text-3xl">
-                                    {item.name}
-                                </h3>
-                                <p className="text-lg sm:text-xl">
-                                    {item.province_name}/{item.city}
-                                </p>
-                            </div>
-                        ))
-                    ) : (
-                        <p className="col-span-3 text-center text-xl">
-                            batik tidak ditemukan.
-                        </p>
-                    )}
-                </div>
-
-                {/* Pagination */}
-                <div className="flex justify-center mt-10">
-                    <nav className="inline-flex bg-gray-100 rounded-full shadow-md py-2 px-4">
-                        <button
-                            onClick={() => handlePageChange(currentPage - 1)}
-                            className={`px-3 py-1 rounded-full ${
-                                currentPage === 1
-                                    ? "text-gray-400 cursor-not-allowed"
-                                    : "text-black"
-                            }`}
-                            disabled={currentPage === 1}
+                        <select
+                            value={selectedProvince || ""}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                handleFilterChange(selectedIsland, value);
+                            }}
+                            className="border p-2 rounded"
                         >
-                            <img src={arrowLeft} alt="Previous" />
-                        </button>
+                            <option value="">Semua Provinsi</option>
+                            {provinces
+                                .filter(
+                                    (province) =>
+                                        !selectedIsland ||
+                                        province.islandId ===
+                                            parseInt(selectedIsland)
+                                )
+                                .map((province) => (
+                                    <option
+                                        key={province.id}
+                                        value={province.id}
+                                    >
+                                        {province.name}
+                                    </option>
+                                ))}
+                        </select>
+                    </div>
 
-                        {getPageNumbers().map((page) => (
+                    {/* Display Filtered Batiks */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {batik.length > 0 ? (
+                            batik.map((item, index) => (
+                                <div
+                                    key={index}
+                                    className="cursor-pointer"
+                                    onClick={() =>
+                                        router.get(`/batik/${item.id}`)
+                                    }
+                                >
+                                    <img
+                                        src={item.linkImage}
+                                        alt={`gambar-${item.name}`}
+                                        className="w-full rounded-2xl h-64 md:h-52 xl:h-60 object-cover"
+                                    />
+                                    <h3 className="mt-5 text-2xl sm:text-3xl">
+                                        {item.name}
+                                    </h3>
+                                    <p className="text-lg sm:text-xl">
+                                        {item.province_name}/{item.city}
+                                    </p>
+                                </div>
+                            ))
+                        ) : (
+                            <p className="col-span-3 text-center text-xl">
+                                batik tidak ditemukan.
+                            </p>
+                        )}
+                    </div>
+
+                    {/* Pagination */}
+                    <div className="flex justify-center mt-10">
+                        <nav className="inline-flex bg-gray-100 rounded-full shadow-md py-2 px-4">
                             <button
-                                key={page}
-                                onClick={() => handlePageChange(page)}
+                                onClick={() =>
+                                    handlePageChange(currentPage - 1)
+                                }
                                 className={`px-3 py-1 rounded-full ${
-                                    currentPage === page
-                                        ? "bg-red-400 text-white"
-                                        : "text-gray-700"
+                                    currentPage === 1
+                                        ? "text-gray-400 cursor-not-allowed"
+                                        : "text-black"
                                 }`}
+                                disabled={currentPage === 1}
                             >
-                                {page}
+                                <img src={arrowLeft} alt="Previous" />
                             </button>
-                        ))}
 
-                        <button
-                            onClick={() => handlePageChange(currentPage + 1)}
-                            className={`px-3 py-1 rounded-full ${
-                                currentPage === totalPages
-                                    ? "text-gray-400 cursor-not-allowed"
-                                    : "text-black"
-                            }`}
-                            disabled={currentPage === totalPages}
-                        >
-                            <img src={arrowRight} alt="Next" />
-                        </button>
-                    </nav>
+                            {getPageNumbers().map((page) => (
+                                <button
+                                    key={page}
+                                    onClick={() => handlePageChange(page)}
+                                    className={`px-3 py-1 rounded-full ${
+                                        currentPage === page
+                                            ? "bg-red-400 text-white"
+                                            : "text-gray-700"
+                                    }`}
+                                >
+                                    {page}
+                                </button>
+                            ))}
+
+                            <button
+                                onClick={() =>
+                                    handlePageChange(currentPage + 1)
+                                }
+                                className={`px-3 py-1 rounded-full ${
+                                    currentPage === totalPages
+                                        ? "text-gray-400 cursor-not-allowed"
+                                        : "text-black"
+                                }`}
+                                disabled={currentPage === totalPages}
+                            >
+                                <img src={arrowRight} alt="Next" />
+                            </button>
+                        </nav>
+                    </div>
                 </div>
+                <Footer />
             </motion.div>
-
-            <Footer />
         </section>
     );
 };

@@ -38,6 +38,7 @@ const LoginPopup = ({
                   if (token) {
                       localStorage.setItem("authToken", token); // Simpan token ke localStorage
                       onLogin(token); // Panggil handler untuk memperbarui state
+                      window.location.reload();
                   } else {
                       setErrorMessage(
                           "Login berhasil, tetapi token tidak diterima."

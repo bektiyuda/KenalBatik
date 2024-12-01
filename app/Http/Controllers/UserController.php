@@ -42,12 +42,10 @@ class UserController extends Controller
         $request->session()->regenerate();
 
         $user = Auth::user();
-        $token = base64_encode(Hash::make($user->email . now())); // Buat token
+        $token = base64_encode(Hash::make($user->email . now()));
 
-        // Simpan token ke session
         session(['authToken' => $token]);
 
-        // Kirim token ke frontend dengan Inertia
          return redirect()->route('Homepage');
     }
 

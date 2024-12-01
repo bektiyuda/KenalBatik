@@ -57,7 +57,7 @@ Route::delete('/provinces/{id}', [ProvinceController::class, 'destroy'])->name('
 
 // HOMEPAGE
 // Route::get('/homepage', [BatikController::class, 'index'])->name('homepage');
-Route::get('/homepage', [BatikController::class, 'index'])->middleware('auth');
+Route::get('/homepage', [BatikController::class, 'index']);
 
 
 //Katalog

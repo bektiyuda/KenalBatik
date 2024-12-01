@@ -4,7 +4,7 @@ import { router, usePage } from "@inertiajs/react";
 import SectionQuotes from "../Sections/SectionQuotes.jsx";
 import Footer from "../Sections/Footer.jsx";
 import LoginPopup from "../Components/auth/LoginPopup.jsx";
-import SignUpPopup from "../components/auth/SignUpPopup.jsx";
+import SignUpPopup from "../Components/auth/SignUpPopup.jsx";
 import ForgotPasswordPopup from "../Components/auth/ForgotPasswordPopup.jsx";
 import ConfirmationPopup from "../Components/ConfirmationPopup.jsx";
 import Peta from "../sections/Peta.jsx";
@@ -135,13 +135,16 @@ function Homepage({ batiks }) {
     }, [authToken, user]);
 
     return (
-        <div className="overflow-hidden">
+        <div className="overflow-hidden relative">
+            <div className="w-full fixed z-50">
+
             <Navbar
                 onLoginClick={toggleLoginPopup}
                 isLoggedIn={isLoggedIn}
                 onLogout={handleLogout}
                 userData={userData}
             />
+            </div>
             {/* Hero Section - Sliding in from left */}
             <Hero
                 onExploreClick={scrollToSectionQuotes}

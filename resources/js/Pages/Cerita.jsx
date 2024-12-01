@@ -77,13 +77,15 @@ const Cerita = () => {
         },
     };
     return (
-        <section className="w-full">
-            <Navbar
-                onLoginClick={toggleLoginPopup}
-                isLoggedIn={isLoggedIn}
-                onLogout={handleLogout}
-                userData={userData}
-            />
+        <section className="w-full relative">
+            <div className="w-full top-0 fixed z-50">
+                <Navbar
+                    onLoginClick={toggleLoginPopup}
+                    isLoggedIn={isLoggedIn}
+                    onLogout={handleLogout}
+                    userData={userData}
+                />
+            </div>
             {isLoginOpen && (
                 <LoginPopup
                     onClose={toggleLoginPopup}
@@ -101,7 +103,7 @@ const Cerita = () => {
                 whileInView="visible"
                 viewport={{ once: false, amount: 0.2 }}
                 variants={quotesVariant}
-                className="my-5 mb-20 mx-5 md:mx-10 lg:mx-20"
+                className="my-5 pt-24 md:pt-14 mb-20 mx-5 md:mx-10 lg:mx-20"
             >
                 <h2 className="text-center font-vidaloka lg:text-5xl lg:mt-20 text-3xl md:text-4xl md:mt-10 lg:mb-10">
                     Cerita di Balik Kenal Batik

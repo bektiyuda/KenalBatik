@@ -4,6 +4,7 @@ import Navbar from "../Components/Navbar";
 import { usePage } from "@inertiajs/react";
 import profil from "../Assets/profil.svg";
 import CircularProgressBar from "../Components/CircularProgressBar";
+import ForgotPasswordPopup from "../Components/auth/ForgotPasswordPopup";
 
 function Kuis() {
     const { props } = usePage();
@@ -19,34 +20,16 @@ function Kuis() {
     const [isSignUpOpen, setIsSignUpOpen] = useState(false);
     const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
     const [isLoginOpen, setIsLoginOpen] = useState(false);
-    // Hitung akurasi
-    // const accuracy =
-    //     questionsAnswered > 0
-    //         ? Math.round((correctAnswers / questionsAnswered) * 100)
-    //         : 0;
+    const [isCheckingAnswers, setIsCheckingAnswers] = useState(false);
+
 
     useEffect(() => {
         console.log(quizData);
         const token = localStorage.getItem("authToken");
         if (token) {
             setIsLoggedIn(true);
-            // fetchUserProfile(token); // Panggil fungsi untuk memuat profil
         }
     }, []);
-
-    // const fetchUserProfile = async (token) => {
-    //     try {
-    //         const response = await axios.get("/api/users/profile", {
-    //             headers: {
-    //                 Authorization: `Bearer ${token}`, // Kirim token sebagai header Authorization
-    //             },
-    //         });
-    //         setUserData(response.data.data);
-    //         // Set data pengguna dari respons API
-    //     } catch (error) {
-    //         console.error("Error fetching user profile:", error);
-    //     }
-    // };
 
     const toggleLoginPopup = () => {
         setIsLoginOpen(!isLoginOpen);
@@ -64,44 +47,23 @@ function Kuis() {
 
     const handleLogout = () => {
         setIsLoggedIn(false);
-        setUserData(null); // Hapus data pengguna setelah logout
-        localStorage.removeItem("authToken"); // Hapus token dari localStorage
-        window.location.reload(); // Refresh page setelah logout
+        setUserData(null);
+        localStorage.removeItem("authToken"); 
+        window.location.reload(); 
     };
 
     const handleLogin = (token) => {
-        localStorage.setItem("authToken", token); // Simpan token ke localStorage
+        localStorage.setItem("authToken", token);
         setIsLoggedIn(true);
-        fetchUserProfile(token); // Ambil data pengguna setelah login
+        fetchUserProfile(token); 
         setIsLoginOpen(false);
     };
 
-    // useEffect(() => {
-    //     const fetchQuizData = async () => {
-    //         try {
-    //             const token = localStorage.getItem("authToken"); // Ambil token dari localStorage
-    //             if (!token) {
-    //                 console.error("No token found. Please log in.");
-    //                 return;
-    //             }
 
-    //             const response = await axios.get("/api/quizzes", {
-    //                 headers: {
-    //                     Authorization: `Bearer ${token}`, // Kirim token dalam header Authorization
-    //                 },
-    //             });
-    //             setQuizData(response.data.data);
-    //         } catch (error) {
-    //             console.error("Error fetching quiz data:", error);
-    //         }
-    //     };
-    //     fetchQuizData();
-    // }, []);
 
-    // Fungsi untuk menghitung waktu mundur
     useEffect(() => {
         if (timeLeft === 0) {
-            setIsQuizCompleted(true); // Ketika waktu habis, tampilkan hasil kuis
+            setIsQuizCompleted(true); 
         }
 
         const timer =
@@ -109,10 +71,9 @@ function Kuis() {
             !isQuizCompleted &&
             setInterval(() => setTimeLeft(timeLeft - 1), 1000);
 
-        return () => clearInterval(timer); // Bersihkan interval saat komponen dibongkar atau waktu habis
+        return () => clearInterval(timer);
     }, [timeLeft, isQuizCompleted]);
 
-    // Format waktu ke dalam bentuk MM:SS
     const formatTime = (seconds) => {
         const minutes = Math.floor(seconds / 60);
         const remainingSeconds = seconds % 60;
@@ -137,34 +98,6 @@ function Kuis() {
         }
     };
 
-    // const checkQuizAnswers = async (answers) => {
-    //     const token = localStorage.getItem("authToken"); // Ambil token dari localStorage
-    //     if (!token) {
-    //         console.error("No token found. Please log in.");
-    //         return;
-    //     }
-
-    //     try {
-    //         const response = await axios.post(
-    //             "api/quizzes/check",
-    //             {
-    //                 quiz_id: answers.map((answer) => answer.quiz_id),
-    //                 user_answer: answers.map((answer) => answer.user_answer),
-    //             },
-    //             {
-    //                 headers: {
-    //                     Authorization: `Bearer ${token}`, // Kirim token dalam header Authorization
-    //                 },
-    //             }
-    //         );
-
-    //         setresponse.data(response.data.data);
-    //         console.log(response.data.data);
-    //     } catch (error) {
-    //         console.error("Error checking quiz answers:", error);
-    //     }
-    // };
-
     const submitAnswers = (answers) => {
         const payload = {
             QuizID: answers.map((answer) => answer.quiz_id),
@@ -176,26 +109,28 @@ function Kuis() {
             .then((response) => {
                 const data = response.data;
 
-                // Lakukan sesuatu dengan data
-                console.log("Gunakan data langsung:", data.username);
-
-                // Simpan ke state untuk kebutuhan render ulang
                 setQuizResult(data);
+                setTimeout(() => {
+                    setIsQuizCompleted(true); // Selesai memeriksa
+                    setIsCheckingAnswers(false); // Sembunyikan loading
+                }, 2000); // Simulasi delay
             })
             .catch((error) => {
                 console.error("Error submitting quiz answers:", error);
+                setIsCheckingAnswers(false); // Sembunyikan loading jika gagal
             });
     };
 
-
     return (
-        <div className="w-full">
-            <Navbar
-                onLoginClick={toggleLoginPopup}
-                isLoggedIn={isLoggedIn}
-                onLogout={handleLogout}
-                userData={userData}
-            />
+        <div className="w-full relative">
+            <div className="w-full fixed top-0 z-50">
+                <Navbar
+                    onLoginClick={toggleLoginPopup}
+                    isLoggedIn={isLoggedIn}
+                    onLogout={handleLogout}
+                    userData={userData}
+                />
+            </div>
             {isLoginOpen && (
                 <LoginPopup
                     onClose={toggleLoginPopup}
@@ -208,9 +143,10 @@ function Kuis() {
             {isForgotPasswordOpen && (
                 <ForgotPasswordPopup onClose={toggleForgotPasswordPopup} />
             )}
-            <div className="">
-                {!isQuizCompleted ? (
-                    <div className="flex flex-col items-center justify-center lg:justify-start lg:mt-14 min-h-screen p-4  lg:mx-32 xl:mx-56">
+
+            <div className="lg:pt-14 pt-28">
+                {!isQuizCompleted && !isCheckingAnswers ? (
+                    <div className="flex flex-col items-center justify-start lg:mt-14 min-h-screen p-4 lg:mx-32 xl:mx-56">
                         <div className="px-7 shadow-2xl mb-3 md:mb-5 md:text-xl lg:text-2xl py-2 bg-[#fef1e2] rounded-3xl">
                             sesi kuis
                         </div>
@@ -262,9 +198,7 @@ function Kuis() {
                                                         {
                                                             quizData[
                                                                 currentQuestion
-                                                            ][
-                                                                `option${option}` // Sesuaikan dengan struktur data seeder
-                                                            ]
+                                                            ][`option${option}`]
                                                         }
                                                     </button>
                                                 )
@@ -279,6 +213,14 @@ function Kuis() {
                                 </div>
                             </div>
                         )}
+                    </div>
+                ) : isCheckingAnswers ? (
+                    // Animasi Loading
+                    <div className="flex flex-col items-center justify-center min-h-screen">
+                        <div className="text-2xl font-bold mb-4">
+                            Memeriksa jawaban...
+                        </div>
+                        <div className="w-16 h-16 border-4 border-t-[#f8a071] border-gray-200 rounded-full animate-spin"></div>
                     </div>
                 ) : (
                     <div className="w-full mt-20">
@@ -299,9 +241,15 @@ function Kuis() {
 
                                     <CircularProgressBar
                                         accuracy={
-                                            (quizResult?.current_correct_answer /
-                                                5) *
-                                            100
+                                            isNaN(
+                                                (quizResult?.current_correct_answer /
+                                                    5) *
+                                                    100
+                                            )
+                                                ? 0
+                                                : (quizResult?.current_correct_answer /
+                                                      5) *
+                                                  100
                                         }
                                     />
 
@@ -384,16 +332,63 @@ function Kuis() {
                                 </div>
                             </div>
 
-                            {/* Right Section (Text Content) */}
+                            {/* Konten kanan */}
                             <div className="basis-full lg:basis-1/2 flex flex-col my-10 lg:items-start">
-                                <p className="text-4xl md:text-5xl lg:text-7xl mb-3 font-vidaloka text-center lg:text-left">
-                                    Kamu Sudah di Jalur yang Tepat!
-                                </p>
-                                <p className="text-xl md:text-2xl lg:text-3xl text-center lg:text-left">
-                                    Pengetahuanmu tentang batik sudah luar
-                                    biasa. Dengan sedikit usaha lagi, kamu bisa
-                                    jadi ahli!
-                                </p>
+                                {(() => {
+                                    const accuracy =
+                                        (quizResult?.current_correct_answer /
+                                            5) *
+                                        100;
+
+                                    if (accuracy <= 40) {
+                                        return (
+                                            <>
+                                                <p className="text-4xl md:text-5xl lg:text-7xl mb-3 font-vidaloka text-center lg:text-left">
+                                                    Langkah Awal yang Hebat!
+                                                </p>
+                                                <p className="text-xl md:text-2xl lg:text-3xl text-center lg:text-left">
+                                                    Setiap perjalanan dimulai
+                                                    dengan langkah pertama. Ayo
+                                                    pelajari lebih banyak
+                                                    tentang batik dan coba lagi!
+                                                </p>
+                                            </>
+                                        );
+                                    } else if (
+                                        accuracy > 40 &&
+                                        accuracy <= 60
+                                    ) {
+                                        return (
+                                            <>
+                                                <p className="text-4xl md:text-5xl lg:text-7xl mb-3 font-vidaloka text-center lg:text-left">
+                                                    Kamu Sudah di Jalur yang
+                                                    Tepat!
+                                                </p>
+                                                <p className="text-xl md:text-2xl lg:text-3xl text-center lg:text-left">
+                                                    Pengetahuanmu tentang batik
+                                                    sudah luar biasa. Dengan
+                                                    sedikit usaha lagi, kamu
+                                                    bisa jadi ahli!
+                                                </p>
+                                            </>
+                                        );
+                                    } else {
+                                        return (
+                                            <>
+                                                <p className="text-4xl md:text-5xl lg:text-7xl mb-3 font-vidaloka text-center lg:text-left">
+                                                    Kamu Ahli Batik Sejati!
+                                                </p>
+                                                <p className="text-xl md:text-2xl lg:text-3xl text-center lg:text-left">
+                                                    Pengetahuanmu tentang batik
+                                                    sangat mengesankan. Teruslah
+                                                    menjaga dan menginspirasi
+                                                    kecintaanmu pada budaya
+                                                    Indonesia!
+                                                </p>
+                                            </>
+                                        );
+                                    }
+                                })()}
                             </div>
                         </div>
                     </div>

@@ -79,13 +79,15 @@ const TentangKita = () => {
     };
 
     return (
-        <div className="max-w-full md:h-screen   flex flex-col">
-            <Navbar
-                onLoginClick={toggleLoginPopup}
-                isLoggedIn={isLoggedIn}
-                onLogout={handleLogout}
-                userData={userData}
-            />
+        <div className="max-w-full md:h-screen relative flex flex-col">
+            <div className="w-full fixed z-50">
+                <Navbar
+                    onLoginClick={toggleLoginPopup}
+                    isLoggedIn={isLoggedIn}
+                    onLogout={handleLogout}
+                    userData={userData}
+                />
+            </div>
             {isLoginOpen && (
                 <LoginPopup
                     onClose={toggleLoginPopup}
@@ -104,7 +106,7 @@ const TentangKita = () => {
                 whileInView="visible"
                 viewport={{ once: false, amount: 0.2 }}
                 variants={quotesVariant}
-                className="w-full md:h-full md:px-20 my-10 lg:my-24 grid grid-cols-1 md:grid-cols-2 lg:flex lg:flex-row items-center justify-center gap-12 lg:gap-32 text-center font-vidaloka"
+                className="w-full pt-20 md:h-full md:px-20 my-10 lg:my-24 grid grid-cols-1 md:grid-cols-2 lg:flex lg:flex-row items-center justify-center gap-12 lg:gap-32 text-center font-vidaloka"
             >
                 <div className="flex flex-col items-center">
                     <img
