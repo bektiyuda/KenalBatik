@@ -143,6 +143,11 @@ class QuizController extends Controller
         return Inertia::render('Result', ['response' => $response]);
     }
 
+    public function createDashboard()
+    {
+        return view('create-quiz');
+    }
+
     public function create(Request $request, SupabaseService $supabaseService)
     {
         $validatedData = $request->validate([
@@ -153,12 +158,16 @@ class QuizController extends Controller
             'optionD' => 'required|string',
             'answer' => 'required|string',
             'difficulty' => 'required|in:Easy,Medium,Hard',
-            'image' => 'required|file|mimes:jpeg,png,jpg|max:2048',
+            'image' => 'file|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        $imagePath = $request->file('image')->getPathname();
-        $imageName = $request->file('image')->getClientOriginalName();
-        $imageUrl = $supabaseService->uploadFile($imagePath, $imageName);
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->getPathname();
+            $imageName = $request->file('image')->getClientOriginalName();
+            $imageUrl = $supabaseService->uploadFile($imagePath, $imageName);
+        } else {
+            $imageUrl = null;
+        }
 
         Quiz::create([
             'question' => $validatedData['question'],
@@ -171,7 +180,7 @@ class QuizController extends Controller
             'imageLink' => $imageUrl,
         ]);
 
-        return redirect()->route('adminQuiz')->with('success', 'Quiz created successfully!');
+        return redirect()->route('quiz.manage');
     }
 
     public function delete($id)
@@ -179,7 +188,13 @@ class QuizController extends Controller
         $quiz = Quiz::find($id);
         $quiz->delete();
 
-        return redirect()->route('adminQuiz')->with('success', 'Quiz deleted successfully!');
+        return redirect()->route('quiz.manage')->with('success', 'Quiz deleted successfully!');
+    }
+
+    public function edit($id)
+    {
+        $quiz = Quiz::findOrFail($id);
+        return view('edit-quiz', ['quiz' => $quiz]);
     }
 
     public function update(Request $request, SupabaseService $supabaseService, $id)
@@ -214,12 +229,13 @@ class QuizController extends Controller
         $quiz->difficulty = $validatedData['difficulty'];
         $quiz->save();
 
-        return redirect()->route('adminQuiz')->with('success', 'Quiz updated successfully!');
+        return redirect()->route('quiz.manage');
     }
 
     public function index()
     {
         $quizzes = Quiz::all();
-        return view('adminQuiz', compact('quizzes'));
+
+        return view('manage-quiz', ['quizzes' => $quizzes]);
     }
 }

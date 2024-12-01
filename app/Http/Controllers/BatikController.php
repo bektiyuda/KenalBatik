@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Batik;
+use App\Models\Island;
+use App\Models\Province;
 use App\Services\SupabaseService;
 use Illuminate\Support\Facades\DB;
 
@@ -118,6 +120,14 @@ class BatikController extends Controller
         ]);
     }
 
+    public function createDashboard()
+    {
+        $provinces = Province::all();
+        $islands = Island::all();
+
+        return view('create-batik', compact('provinces', 'islands'));
+    }
+
     public function create(Request $request, SupabaseService $supabaseService)
     {
         $validated = $request->validate([
@@ -144,7 +154,7 @@ class BatikController extends Controller
             'linkImage' => $imageUrl,
         ]);
 
-        return Inertia::render('Admin');
+        return redirect()->route('batik.manage')->with('success', 'Batik berhasil ditambahkan.');
     }
 
     function delete($id)
@@ -152,8 +162,22 @@ class BatikController extends Controller
         $batik = Batik::find($id);
         $batik->delete();
 
-        return Inertia::render('Admin');
+        return redirect()->route('batik.manage')->with('success', 'Batik berhasil ditambahkan.');
     }
+
+    public function updateDashboard($id)
+    {
+        $batik = Batik::findOrFail($id);
+        $provinces = DB::table('provinces')->get();
+        $islands = DB::table('islands')->get();
+
+        return view('edit-batik', [
+            'batik' => $batik,
+            'provinces' => $provinces,
+            'islands' => $islands,
+        ]);
+    }
+
 
     public function update(Request $request, SupabaseService $supabaseService, $id)
     {
@@ -186,6 +210,32 @@ class BatikController extends Controller
 
         $batik->save();
 
-        return Inertia::render('Admin');
+        return redirect()->route('batik.manage');
+    }
+
+    public function manageBatik(Request $request)
+    {
+        $search = $request->input('search');
+
+        $query = Batik::query()
+            ->join('provinces', 'batiks.provinceId', '=', 'provinces.id')
+            ->join('islands', 'batiks.islandId', '=', 'islands.id')
+            ->select(
+                'batiks.*',
+                'provinces.name as province_name',
+                'islands.name as island_name'
+            );
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('batiks.name', 'like', "%{$search}%")
+                    ->orWhere('batiks.description', 'like', "%{$search}%")
+                    ->orWhere('batiks.city', 'like', "%{$search}%");
+            });
+        }
+
+        $batiks = $query->get();
+
+        return view('manage-batik', compact('batiks', 'search'));
     }
 }
