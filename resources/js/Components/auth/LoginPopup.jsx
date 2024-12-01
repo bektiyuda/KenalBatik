@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import axios from "axios";
-import sideImage from "../../assets/login-image.png";
+import { useState } from "react";
+import { router } from "@inertiajs/react";
+import Logo from "../../Assets/logo.svg";
+import sideImage from "../../Assets/login-image.png";
 import googleImage from "../../assets/Google Logo.svg";
-import Logo from "../../assets/logo.svg";
 
 const LoginPopup = ({
     onClose,
@@ -10,11 +10,57 @@ const LoginPopup = ({
     onForgotPasswordClick,
     onLogin,
 }) => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [errorMessage, setErrorMessage] = useState(""); // Untuk menampilkan error message jika login gagal
+    const [formData, setFormData] = useState({
+        email: "",
+        password: "",
+    });
+    const [errorMessage, setErrorMessage] = useState("");
 
-    // Function untuk login dengan Google OAuth
+    const handleChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value,
+        });
+    };
+
+  const handleSubmit = (e) => {
+      e.preventDefault();
+
+      console.log("Submitting form with data:", formData); // Log data untuk debugging
+
+      router.post(
+          "/login", // Endpoint login
+          { email: formData.email, password: formData.password }, // Data login
+          {
+              onSuccess: (page) => {
+                  // Ambil token dari response props
+                  const token = page.props.authToken; // Pastikan respons backend mengembalikan authToken
+                  if (token) {
+                      localStorage.setItem("authToken", token); // Simpan token ke localStorage
+                      onLogin(token); // Panggil handler untuk memperbarui state
+                  } else {
+                      setErrorMessage(
+                          "Login berhasil, tetapi token tidak diterima."
+                      );
+                  }
+                  onClose(); // Tutup popup login
+              },
+              onError: (errors) => {
+                  // Tampilkan pesan error
+                  setErrorMessage(errors.email || "Login gagal. Coba lagi.");
+              },
+          }
+      );
+  };
+
+
+
+    const handleOverlayClick = (e) => {
+        if (e.target.id === "overlay") {
+            onClose();
+        }
+    };
+
     const handleGoogleLogin = async () => {
         try {
             // Panggil API OAuth login untuk mendapatkan URL redirect
@@ -28,38 +74,6 @@ const LoginPopup = ({
         } catch (error) {
             console.error("Error during Google OAuth login:", error.message);
             setErrorMessage("Gagal mengarahkan ke Google untuk login.");
-        }
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const response = await axios.post("/api/users/login", {
-                email: email, // Sesuaikan field dengan apa yang diharapkan oleh API
-                password: password,
-            });
-
-            // Jika berhasil login, simpan token ke local storage atau state
-            const token = response.data.data.token;
-            localStorage.setItem("token", response.data.data.token); // Simpan token ke local storage
-            console.log(response.data.data.token);
-            console.log(token);
-
-            onLogin(token); // Trigger login success callback
-            onClose(); // Tutup popup setelah login berhasil
-        } catch (error) {
-            // Jika terjadi error, tampilkan pesan error di UI
-            console.error(
-                "Login failed:",
-                error.response ? error.response.data : error.message
-            );
-            setErrorMessage("Login gagal. Periksa email atau kata sandi Anda.");
-        }
-    };
-
-    const handleOverlayClick = (e) => {
-        if (e.target.id === "overlay") {
-            onClose();
         }
     };
 
@@ -112,9 +126,10 @@ const LoginPopup = ({
                                 </label>
                                 <input
                                     type="email"
+                                    name="email"
                                     className="border border-gray-300 rounded-lg w-full py-2 px-3"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
+                                    value={formData.email}
+                                    onChange={handleChange}
                                     required
                                 />
                             </div>
@@ -124,11 +139,10 @@ const LoginPopup = ({
                                 </label>
                                 <input
                                     type="password"
+                                    name="password"
                                     className="border border-gray-300 rounded-lg w-full py-2 px-3"
-                                    value={password}
-                                    onChange={(e) =>
-                                        setPassword(e.target.value)
-                                    }
+                                    value={formData.password}
+                                    onChange={handleChange}
                                     required
                                 />
                             </div>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { router } from "@inertiajs/react";
 import { motion } from "framer-motion";
 import heroImage from "../Assets/mascoot.png";
@@ -14,16 +14,25 @@ import ybi from "../Assets/ybi.png";
 import bubleTail from "../Assets/hero/bubbletail.svg";
 import ConfirmationPopup from "../Components/ConfirmationPopup";
 
-const Hero = ({ isLoggedIn, onExploreClick }) => {
+const Hero = ({ onExploreClick }) => {
     const [showPopup, setShowPopup] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    
+    const token = localStorage.getItem("authToken");
+
+    useEffect(() => {
+        setIsLoggedIn(!!token);
+    }, []);
 
     const handleQuizClick = () => {
+        console.log(token);
         if (!isLoggedIn) {
             setShowPopup(true);
         } else {
             router.visit("/prequiz");
         }
     };
+
     const handleClosePopup = () => {
         setShowPopup(false);
     };
@@ -128,7 +137,7 @@ const Hero = ({ isLoggedIn, onExploreClick }) => {
                 <div
                     className="-mt-[500px] md:-mt-48 lg:-mt-80 bg-cover bg-center h-[500px] md:h-[300px] lg:h-[400px] z-0"
                     style={{
-                        backgroundImage: `url(${backgroundImage})`, 
+                        backgroundImage: `url(${backgroundImage})`, // Ganti dengan path gambar yang benar
                     }}
                 ></div>
 

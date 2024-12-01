@@ -11,10 +11,6 @@ use Inertia\Inertia;
 
 class UserController extends Controller
 {
-    public function registerForm()
-    {
-        return Inertia::render('register');
-    }
 
     public function register(Request $request)
     {
@@ -30,28 +26,35 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        return redirect()->route('register.form');
+        return redirect()->route('Homepage');
     }
 
-    public function authenticate(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|string',
-        ]);
+  public function authenticate(Request $request)
+{
+    $request->validate([
+        'email' => 'required|email',
+        'password' => 'required|string',
+    ]);
 
-        $credentials = $request->only('email', 'password');
+    $credentials = $request->only('email', 'password');
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
+    if (Auth::attempt($credentials)) {
+        $request->session()->regenerate();
 
-            return redirect()->intended('profile');
-        }
+        $user = Auth::user();
+        $token = base64_encode(Hash::make($user->email . now())); // Buat token
 
-        return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ]);
+        // Simpan token ke session
+        session(['authToken' => $token]);
+
+        // Kirim token ke frontend dengan Inertia
+         return redirect()->route('Homepage');
     }
+
+    return back()->withErrors([
+        'email' => 'Email atau kata sandi salah',
+    ]);
+}
 
     public function profile()
     {
@@ -62,6 +65,8 @@ class UserController extends Controller
             ->leftJoin('user_answers', 'users.id', '=', 'user_answers.userId')
             ->select(
                 'users.username',
+                'users.email',
+                'users.isAdmin',
                 'users.experience',
                 'users.tier as user_tier',
                 'tiers.imageLink as tier_image_link',
@@ -71,6 +76,8 @@ class UserController extends Controller
             ->where('users.id', $user->id)
             ->groupBy(
                 'users.username',
+                'users.email',
+                'users.isAdmin',
                 'users.experience',
                 'users.tier',
                 'tiers.imageLink'
@@ -86,14 +93,16 @@ class UserController extends Controller
 
         $response = [
             'username' => $userProfile->username,
+            'email' => $userProfile->email,
+            'is_admin' => $userProfile->isAdmin,
             'user_experience' => $userProfile->experience,
             'user_tier' => $userProfile->user_tier,
             'tier_photo_link' => $userProfile->tier_image_link,
             'exp_to_next_tier' => $expToNextTier,
-            'total_quiz' => $userProfile->total_quizzes_taken ?? 0,
+            'total_quiz' => $userProfile->total_quizzes_taken * 5 ?? 0,
             'total_correct_answer' => $userProfile->total_correct_answer ?? 0,
         ];
 
-        return Inertia::render('profile', ['response' => $response]);
+        return response()->json($response);
     }
 }

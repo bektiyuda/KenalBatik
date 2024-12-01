@@ -9,23 +9,25 @@ use App\Models\Island;
 use App\Models\Province;
 use App\Services\SupabaseService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class BatikController extends Controller
 {
-    public function index(Request $request)
-    {
-        $islandId = $request->query('pulau');
+   public function index(Request $request)
+{
+    $islandId = $request->query('pulau');
+    $batiks = Batik::all(); // Contoh data
 
-        $batiks = collect();
-
-        if ($islandId) {
+    if ($islandId) {
             $batiks = Batik::where('islandId', $islandId)->get();;
         }
+    $authToken = session('authToken');
 
-        return Inertia::render('Homepage', [
-            'batiks' => $batiks
-        ]);
-    }
+    return Inertia::render('Homepage', [
+        'batiks' => $batiks,
+        'authToken' => $authToken,
+    ]);
+}
 
     public function tes()
     {
@@ -91,7 +93,28 @@ class BatikController extends Controller
             'selectedIsland' => $pulau,
             'selectedProvince' => $provinsi,
         ]);
+    
+
+    if (!is_null($provinsi)) {
+        $query->where('batiks.provinceId', $provinsi);
     }
+
+    $total = $query->count();
+    $batik = $query->offset($offset)->limit($limit)->get();
+
+    $islands = DB::table('islands')->get();
+    $provinces = DB::table('provinces')->get();
+
+    return Inertia::render('Catalog', [
+        'batik' => $batik,
+        'islands' => $islands,
+        'provinces' => $provinces,
+        'currentPage' => (int) $page,
+        'totalPages' => (int) ceil($total / $limit),
+        'selectedIsland' => $pulau,
+        'selectedProvince' => $provinsi,
+    ]);
+}
 
     public function overview($id)
     {

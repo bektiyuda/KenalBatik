@@ -1,6 +1,9 @@
 import React from "react";
+import SignUpPopup from "../components/auth/SignUpPopup.jsx";
+import { usePage } from "@inertiajs/react";
 
-const ConfirmationPopup = ({ onClose }) => {
+const ConfirmationPopup = ({onLoginClick, onClose }) => {
+    const { auth } = usePage().props;
     return (
         <div
             id="overlay"
@@ -20,6 +23,13 @@ const ConfirmationPopup = ({ onClose }) => {
                         className="border bg-[#e4666c] text-white px-6 py-2 rounded-lg"
                     >
                         Batal
+                    </button>
+
+                    <button
+                        onClick={onClose}
+                        className="border bg-[#e4666c] text-white px-6 py-2 rounded-lg"
+                    >
+                        Masuk
                     </button>
                 </div>
             </div>

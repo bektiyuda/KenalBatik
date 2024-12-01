@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { router } from "@inertiajs/react";
 import Navbar from "../Components/Navbar";
 import quizCard1 from "../Assets/quizcard1.png";
 import quizCard2 from "../Assets/quizcard2.png";
@@ -6,6 +6,7 @@ import quizCard3 from "../Assets/quizcard3.png";
 import mainImage from "../Assets/imgprequiz.png";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import ForgotPasswordPopup from "../Components/auth/ForgotPasswordPopup";
 
 const PreQuiz = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -62,11 +63,20 @@ const PreQuiz = () => {
         fetchUserProfile(token);
         setIsLoginOpen(false);
     };
-    const navigate = useNavigate();
 
     const handleQuizClick = () => {
-        navigate("/kuis");
+        const token = localStorage.getItem("authToken");
+
+        if (!token) {
+            alert("Anda harus login untuk mengakses kuis.");
+            setIsLoginOpen(true);
+            return;
+        }
+
+        // Navigasi ke halaman kuis
+        window.location.href = "/kuis";
     };
+
     return (
         <section className="overflow-hidden">
             <Navbar

@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect } from "react";
 import Hero from "../Sections/Hero";
+import { router, usePage } from "@inertiajs/react";
 import SectionQuotes from "../Sections/SectionQuotes.jsx";
 import Footer from "../Sections/Footer.jsx";
 import LoginPopup from "../Components/auth/LoginPopup.jsx";
-import SignUpPopup from "../Components/auth/SignUpPopup.jsx";
+import SignUpPopup from "../components/auth/SignUpPopup.jsx";
 import ForgotPasswordPopup from "../Components/auth/ForgotPasswordPopup.jsx";
 import ConfirmationPopup from "../Components/ConfirmationPopup.jsx";
 import Peta from "../sections/Peta.jsx";
@@ -13,35 +14,17 @@ import Timeline from "../Sections/Timeline.jsx";
 import { motion } from "framer-motion";
 
 function Homepage({ batiks }) {
+
+    const { props } = usePage(); // Ambil props dari Inertia
+    const { authToken, user } = props;
+
+
     const [isLoginOpen, setIsLoginOpen] = useState(false);
     const [isSignUpOpen, setIsSignUpOpen] = useState(false);
     const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
     const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [userData, setUserData] = useState(null); // Menyimpan data pengguna
-
-    // Cek apakah token ada di localStorage pada saat pertama kali komponen di-render
-    useEffect(() => {
-        const token = localStorage.getItem("authToken");
-        if (token) {
-            setIsLoggedIn(true);
-            fetchUserProfile(token); // Panggil fungsi untuk memuat profil
-        }
-    }, []);
-
-    // const fetchUserProfile = async (token) => {
-    //     try {
-    //         const response = await axios.get("/api/users/profile", {
-    //             headers: {
-    //                 Authorization: `Bearer ${token}`, // Kirim token sebagai header Authorization
-    //             },
-    //         });
-    //         setUserData(response.data.data);
-    //         // Set data pengguna dari respons API
-    //     } catch (error) {
-    //         console.error("Error fetching user profile:", error);
-    //     }
-    // };
+    const [userData, setUserData] = useState(null);
 
     const toggleLoginPopup = () => {
         setIsLoginOpen(!isLoginOpen);
@@ -61,6 +44,14 @@ function Homepage({ batiks }) {
         setIsConfirmationOpen(!isConfirmationOpen);
     };
 
+    useEffect(() => {
+        const token = localStorage.getItem("authToken");
+        if (token) {
+            setIsLoggedIn(true);
+          
+        }
+    }, []);
+
     const handleLogout = () => {
         setIsLoggedIn(false);
         setUserData(null); // Hapus data pengguna setelah logout
@@ -69,11 +60,27 @@ function Homepage({ batiks }) {
     };
 
     const handleLogin = (token) => {
-        localStorage.setItem("authToken", token); // Simpan token ke localStorage
+        localStorage.setItem("authToken", token);
+        console.log(token);
         setIsLoggedIn(true);
-        fetchUserProfile(token); // Ambil data pengguna setelah login
+        // fetchUserProfile(token);
         setIsLoginOpen(false);
     };
+
+    // const fetchUserProfile = () => {
+    //     router.get(
+    //         "/profile",
+    //         {},
+    //         {
+    //             onSuccess: ({ props }) => {
+    //                 setUserData(props.response); // Pastikan response sesuai
+    //             },
+    //             onError: (errors) => {
+    //                 console.error("Error fetching profile:", errors);
+    //             },
+    //         }
+    //     );
+    // };
 
     const sectionQuotesRef = useRef(null);
 
@@ -121,6 +128,11 @@ function Homepage({ batiks }) {
             },
         },
     };
+
+    useEffect(() => {
+        console.log("Auth Token:", authToken);
+        console.log("User Data:", user);
+    }, [authToken, user]);
 
     return (
         <div className="overflow-hidden">

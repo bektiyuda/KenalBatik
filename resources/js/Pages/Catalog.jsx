@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { router } from "@inertiajs/react";
 import { motion } from "framer-motion";
 import LoginPopup from "../Components/auth/LoginPopup";
-import SignUpPopup from "../Components/auth/SignUpPopup";
+import SignUpPopup from "../components/auth/SignUpPopup";
 import ForgotPasswordPopup from "../Components/auth/ForgotPasswordPopup";
 import Navbar from "../Components/Navbar";
 import Footer from "../Sections/Footer";
@@ -40,15 +40,15 @@ const Catalog = ({
 
     const handleLogout = () => {
         setIsLoggedIn(false);
-        setUserData(null); 
+        setUserData(null);
         localStorage.removeItem("authToken");
-        window.location.reload(); 
+        window.location.reload();
     };
 
     const handleLogin = (token) => {
-        localStorage.setItem("authToken", token); 
+        localStorage.setItem("authToken", token);
         setIsLoggedIn(true);
-        fetchUserProfile(token); 
+        fetchUserProfile(token);
         setIsLoginOpen(false);
     };
 
@@ -67,14 +67,11 @@ const Catalog = ({
     const handlePageChange = (page) => {
         console.log("Navigating to Page:", page);
         if (page >= 1 && page <= totalPages) {
-            router.get(
-                "/catalog",
-                {
-                    pulau: selectedIsland || null,
-                    provinsi: selectedProvince || null,
-                    page,
-                },
-            );
+            router.get("/catalog", {
+                pulau: selectedIsland || null,
+                provinsi: selectedProvince || null,
+                page,
+            });
         }
 
         console.log("Current Page from Props:", currentPage);
@@ -110,6 +107,10 @@ const Catalog = ({
         },
     };
 
+    useEffect(() => {
+        console.log(batik)
+    }, []);
+
     return (
         <section className="w-full">
             <Navbar
@@ -131,12 +132,13 @@ const Catalog = ({
                 <ForgotPasswordPopup onClose={toggleForgotPasswordPopup} />
             )}
 
-            <motion.div 
+            <motion.div
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: false, amount: 0.2 }}
                 variants={quotesVariant}
-                className="max-w-full mb-10 font-vidaloka mx-4 sm:mx-8 md:mx-16 lg:mx-32 xl:mx-48">
+                className="max-w-full mb-10 font-vidaloka mx-4 sm:mx-8 md:mx-16 lg:mx-32 xl:mx-48"
+            >
                 <h2 className="text-center text-2xl md:text-5xl lg:text-6xl mt-6 md:mt-10">
                     Koleksi Batik Indonesia
                 </h2>

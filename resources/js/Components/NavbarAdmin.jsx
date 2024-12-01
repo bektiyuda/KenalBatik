@@ -1,9 +1,9 @@
-import { usePage,Link } from "@inertiajs/react";
+import { usePage } from "@inertiajs/react";
 import { useState, useEffect } from "react";
 import Logo from "../assets/logo.svg";
-import Profil from "../Components/Profil";
+import Profil from "../components/Profil";
 
-const Navbar = ({ onLoginClick, onLogout, response }) => {
+const NavbarAdmin = ({ onLoginClick, onLogout }) => {
     const { auth } = usePage().props; // Ambil shared props dari Inertia.js
     const [isAuthenticated, setIsAuthenticated] = useState(false); // State untuk status login
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -13,9 +13,9 @@ const Navbar = ({ onLoginClick, onLogout, response }) => {
     const toggleProfil = () => setIsProfilOpen(!isProfilOpen);
 
     const handleLogout = () => {
-        localStorage.removeItem("authToken");
-        setIsAuthenticated(false);
-        onLogout();
+        localStorage.removeItem("authToken"); // Hapus token
+        setIsAuthenticated(false); // Ubah status login
+        onLogout(); // Panggil fungsi logout dari parent jika ada
     };
 
     useEffect(() => {
@@ -72,16 +72,20 @@ const Navbar = ({ onLoginClick, onLogout, response }) => {
                             Tentang Kita
                         </button>
                     </li>
-
                     {isAuthenticated ? (
-                        <li>
+                        <li className="relative">
                             <button
                                 onClick={toggleProfil}
                                 className="hover:text-[#c95745]"
                             >
                                 Profil
                             </button>
-                            {isProfilOpen && <Profil onLogout={handleLogout} />}
+                            {isProfilOpen && (
+                                <Profil
+                                    onLogout={handleLogout}
+                                    userData={auth.user}
+                                />
+                            )}
                         </li>
                     ) : (
                         <li>
@@ -185,4 +189,4 @@ const Navbar = ({ onLoginClick, onLogout, response }) => {
     );
 };
 
-export default Navbar;
+export default NavbarAdmin;

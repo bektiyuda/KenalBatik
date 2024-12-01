@@ -11,10 +11,14 @@ use App\Http\Middleware\AuthenticationAdmin;
 use App\Http\Middleware\AuthenticationUser;
 use App\Models\Quiz;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
-    return Inertia::render('Homepage');
-});
+    return Inertia::render('Homepage', [
+        'authToken' => session('authToken'), // Ambil token dari sesi
+    ]);
+})->name('Homepage');
+
 
 Route::get('/healt-check', function() {
     return view('check');
@@ -23,10 +27,6 @@ Route::get('/healt-check', function() {
 Route::get('/prequiz', function () {
     return Inertia::render('PreQuiz');
 });
-
-// Route::get('/overview/{id}', function ($id) {
-//     return Inertia::render('Overview', ['id' => $id]);
-// });
 
 Route::get('/catalog', function (Request $request) {
     $pulau = $request->query('pulau');
@@ -41,6 +41,14 @@ Route::get('/tentangkita', function () {
     return Inertia::render('TentangKita');
 });
 
+Route::get('/admin/batik', function () {
+    return view('admin-batik');
+});
+
+// Route::get('/kuis', function () {
+//     return Inertia::render('Kuis');
+// });
+
 // PROVINCE
 Route::get('/provinces', [ProvinceController::class, 'index'])->name('provinces.index');
 Route::post('/provinces', [ProvinceController::class, 'store'])->name('provinces.store');
@@ -48,7 +56,9 @@ Route::put('/provinces/{id}', [ProvinceController::class, 'update'])->name('prov
 Route::delete('/provinces/{id}', [ProvinceController::class, 'destroy'])->name('provinces.destroy');
 
 // HOMEPAGE
-Route::get('/homepage', [BatikController::class, 'index'])->name('homepage');
+// Route::get('/homepage', [BatikController::class, 'index'])->name('homepage');
+Route::get('/homepage', [BatikController::class, 'index'])->middleware('auth');
+
 
 //Katalog
 Route::get('/catalog', [BatikController::class, 'catalog'])->name('catalog');
@@ -62,12 +72,12 @@ Route::post('/register', [UserController::class, 'register'])->name('register');
 
 //Login
 Route::post('/login', [UserController::class, 'authenticate'])->name('login');
-Route::get('login', function() {
-    return view('login');
-})->name('login');
+// Route::get('login', function() {
+//     return view('login');
+// })->name('login');
 
 //Quiz
-Route::get('/quiz', [QuizController::class, 'getQuiz'])->middleware(AuthenticationUser::class)->name('quiz');
+Route::get('/kuis', [QuizController::class, 'getQuiz'])->middleware(AuthenticationUser::class)->name('quiz');
 Route::post('/check-answer', [QuizController::class, 'checkAnswer'])->name('checkanswer');
 
 //Crud Quiz
@@ -79,6 +89,16 @@ Route::get('/profile', [UserController::class, 'profile'])->middleware(Authentic
 Route::get('/healt-check', function() {
     return view('check');
 });
+
+Route::post('/logout', function(Request $request) {
+    Auth::logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
+    // Redirect ke route dengan nama 'Homepage'
+    return redirect()->route('Homepage');
+})->name('logout');
+
 
 //AdminBatik
 Route::get('/admin/batik', [BatikController::class, 'manageBatik'])->middleware(AuthenticationAdmin::class)->name('batik.manage');
