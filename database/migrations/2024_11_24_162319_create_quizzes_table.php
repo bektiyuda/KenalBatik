@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('optionC');
             $table->string('optionD');
             $table->enum('difficulty', ['Easy', 'Medium', 'Hard']);
-            $table->string('imageLink');
+            $table->string('imageLink')->nullable();
             $table->timestamps();
         });
     }
