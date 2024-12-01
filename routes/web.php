@@ -81,19 +81,19 @@ Route::get('/healt-check', function() {
 });
 
 //AdminBatik
-Route::get('/admin/batik', [BatikController::class, 'manageBatik'])->name('batik.manage');
-Route::get('/admin/batik/create', [BatikController::class, 'createDashboard'])->name('batik.create');
-Route::post('/create', [BatikController::class, 'create'])->name('batik.store');
-Route::delete('/delete/{id}', [BatikController::class, 'delete'])->name('batik.delete');
-Route::get('/admin/batik/{id}/edit', [BatikController::class, 'updateDashboard'])->name('batik.edit');
-Route::put('/update/{id}', [BatikController::class, 'update'])->name('batik.update');
+Route::get('/admin/batik', [BatikController::class, 'manageBatik'])->middleware(AuthenticationAdmin::class)->name('batik.manage');
+Route::get('/admin/batik/create', [BatikController::class, 'createDashboard'])->middleware(AuthenticationAdmin::class)->name('batik.create');
+Route::post('/create', [BatikController::class, 'create'])->middleware(AuthenticationAdmin::class)->name('batik.store');
+Route::delete('/delete/{id}', [BatikController::class, 'delete'])->middleware(AuthenticationAdmin::class)->name('batik.delete');
+Route::get('/admin/batik/{id}/edit', [BatikController::class, 'updateDashboard'])->middleware(AuthenticationAdmin::class)->name('batik.edit');
+Route::put('/update/{id}', [BatikController::class, 'update'])->middleware(AuthenticationAdmin::class)->name('batik.update');
 
 //AdminQuiz
-Route::get('/admin/quiz', [QuizController::class, 'index'])->name('quiz.manage');
+Route::get('/admin/quiz', [QuizController::class, 'index'])->middleware(AuthenticationAdmin::class)->name('quiz.manage');
 Route::get('/quiz/create', function() {
     return view('create-quiz');
-})->name('quiz.create');
-Route::post('admin/quiz', [QuizController::class, 'create'])->name('quiz.store');
-Route::get('/quiz/{id}/edit', [QuizController::class, 'edit'])->name('quiz.edit');
-Route::post('/quiz/{id}/update', [QuizController::class, 'update'])->name('quiz.update');
-Route::delete('/quiz/{id}', [QuizController::class, 'delete'])->name('quiz.delete');
+})->middleware(AuthenticationAdmin::class)->name('quiz.create');
+Route::post('admin/quiz', [QuizController::class, 'create'])->middleware(AuthenticationAdmin::class)->name('quiz.store');
+Route::get('/quiz/{id}/edit', [QuizController::class, 'edit'])->middleware(AuthenticationAdmin::class)->name('quiz.edit');
+Route::post('/quiz/{id}/update', [QuizController::class, 'update'])->middleware(AuthenticationAdmin::class)->name('quiz.update');
+Route::delete('/quiz/{id}', [QuizController::class, 'delete'])->middleware(AuthenticationAdmin::class)->name('quiz.delete');
