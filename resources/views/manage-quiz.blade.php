@@ -9,18 +9,44 @@
             font-family: Arial, sans-serif;
             background-color: #f9f9f9;
             margin: 0;
-            padding: 20px;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background-color: #f4f4f9; /* Warna background */
+            border-bottom: 1px solid #ddd;
+        }
+        .navbar .logo {
+            font-family: 'Georgia', serif;
+            font-size: 24px;
+            font-weight: bold;
+            color: #000;
+            text-transform: uppercase;
+        }
+        .navbar .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        .navbar .nav-links a {
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: bold;
+            color: #000;
+            transition: color 0.3s ease;
+        }
+        .navbar .nav-links a:hover {
+            color: #007bff;
         }
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-        }
-        .header h1 {
-            margin: 0;
+            margin: 20px 40px; /* Memberi jarak dari tepi layar */
         }
         .filter-container {
+            flex: 1;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -43,7 +69,8 @@
             cursor: pointer;
         }
         table {
-            width: 100%;
+            width: calc(100% - 80px); /* Memberi jarak pada tabel dari tepi layar */
+            margin: 0 auto; /* Tengah */
             border-collapse: collapse;
             background-color: #fff;
         }
@@ -61,9 +88,16 @@
     </style>
 </head>
 <body>
-    <!-- Header dengan filter dan tombol tambah -->
+    <div class="navbar">
+        <div class="logo">Kenal Batik</div>
+        <div class="nav-links">
+            <a href="{{ route('batik.manage') }}">Batik</a>
+            <a href="{{ route('quiz.manage') }}">Quiz</a>
+            <a href="{{ url('/') }}">Homepage</a>
+        </div>
+    </div>
+
     <div class="header">
-        <h1>Kelola Quiz</h1>
         <div class="filter-container">
             <label for="filterDifficulty">Filter by Difficulty:</label>
             <select id="filterDifficulty" name="filterDifficulty" onchange="filterQuizzes(this.value)">
@@ -76,17 +110,11 @@
         <a href="{{ route('quiz.create') }}" class="add-button">Tambah Quiz</a>
     </div>
 
-    <!-- Tabel Quiz -->
     <table>
         <thead>
             <tr>
                 <th>#</th>
                 <th>Pertanyaan</th>
-                <th>Opsi A</th>
-                <th>Opsi B</th>
-                <th>Opsi C</th>
-                <th>Opsi D</th>
-                <th>Jawaban</th>
                 <th>Tingkat Kesulitan</th>
                 <th>Aksi</th>
             </tr>
@@ -96,15 +124,14 @@
                 <tr class="quiz-row" data-difficulty="{{ $quiz->difficulty }}">
                     <td>{{ $index + 1 }}</td>
                     <td>{{ $quiz->question }}</td>
-                    <td>{{ $quiz->option_a }}</td>
-                    <td>{{ $quiz->option_b }}</td>
-                    <td>{{ $quiz->option_c }}</td>
-                    <td>{{ $quiz->option_d }}</td>
-                    <td>{{ $quiz->answer }}</td>
                     <td>{{ $quiz->difficulty }}</td>
                     <td>
                         <a href="{{ route('quiz.edit', $quiz->id) }}">Edit</a> |
-                        <a href="{{ route('quiz.delete', $quiz->id) }}" onclick="return confirm('Apakah Anda yakin ingin menghapus quiz ini?')">Hapus</a>
+                        <form action="{{ route('quiz.delete', $quiz->id) }}" method="POST" style="display: inline-block;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus quiz ini?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" style="border: none; background: none; color: red; cursor: pointer;">Hapus</button>
+                        </form>
                     </td>
                 </tr>
             @endforeach
@@ -112,7 +139,6 @@
     </table>
 
     <script>
-        // Filter quiz berdasarkan tingkat kesulitan
         function filterQuizzes(difficulty) {
             const rows = document.querySelectorAll('.quiz-row');
             rows.forEach(row => {

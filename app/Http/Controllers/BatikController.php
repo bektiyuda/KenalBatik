@@ -217,12 +217,21 @@ class BatikController extends Controller
     {
         $search = $request->input('search');
 
-        $query = Batik::query();
+        $query = Batik::query()
+            ->join('provinces', 'batiks.provinceId', '=', 'provinces.id')
+            ->join('islands', 'batiks.islandId', '=', 'islands.id')
+            ->select(
+                'batiks.*',
+                'provinces.name as province_name',
+                'islands.name as island_name'
+            );
 
         if ($search) {
-            $query->where('name', 'like', "%{$search}%")
-                ->orWhere('description', 'like', "%{$search}%")
-                ->orWhere('city', 'like', "%{$search}%");
+            $query->where(function ($q) use ($search) {
+                $q->where('batiks.name', 'like', "%{$search}%")
+                    ->orWhere('batiks.description', 'like', "%{$search}%")
+                    ->orWhere('batiks.city', 'like', "%{$search}%");
+            });
         }
 
         $batiks = $query->get();

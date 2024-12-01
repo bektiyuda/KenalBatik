@@ -9,6 +9,7 @@ use App\Http\Controllers\QuizController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\AuthenticationAdmin;
 use App\Http\Middleware\AuthenticationUser;
+use App\Models\Quiz;
 use Illuminate\Routing\Controllers\Middleware;
 
 Route::get('/', function () {
@@ -68,30 +69,31 @@ Route::get('login', function() {
 //Quiz
 Route::get('/quiz', [QuizController::class, 'getQuiz'])->middleware(AuthenticationUser::class)->name('quiz');
 Route::post('/check-answer', [QuizController::class, 'checkAnswer'])->name('checkanswer');
+
 //Crud Quiz
-Route::get('/adminQuiz', [QuizController::class, 'index'])->name('adminQuiz');
-Route::post('/quiz/create', [QuizController::class, 'create'])->name('quiz.create');
-Route::post('/quiz/update/{id}', [QuizController::class, 'update'])->name('quiz.update');
-Route::delete('/quiz/delete/{id}', [QuizController::class, 'delete'])->name('quiz.delete');
+
 
 //Profile
 Route::get('/profile', [UserController::class, 'profile'])->middleware(AuthenticationUser::class)->name('profile');
-
-//Batik
-Route::get('/admin/batik/create', [BatikController::class, 'createDashboard'])->name('batik.create');
-Route::post('/create', [BatikController::class, 'create'])->name('batik.store');
-Route::delete('/delete/{id}', [BatikController::class, 'delete'])->name('batik.delete');
-
-Route::get('/admin/batik/{id}/edit', [BatikController::class, 'updateDashboard'])->name('batik.edit');
-Route::put('/update/{id}', [BatikController::class, 'update'])->name('batik.update');
 
 Route::get('/healt-check', function() {
     return view('check');
 });
 
-Route::get('/admin', function() {
-    return view('admin');
-})->name('admin');
-
-Route::get('/admin/quiz', [QuizController::class, 'index'])->name('quiz.index');
+//AdminBatik
 Route::get('/admin/batik', [BatikController::class, 'manageBatik'])->name('batik.manage');
+Route::get('/admin/batik/create', [BatikController::class, 'createDashboard'])->name('batik.create');
+Route::post('/create', [BatikController::class, 'create'])->name('batik.store');
+Route::delete('/delete/{id}', [BatikController::class, 'delete'])->name('batik.delete');
+Route::get('/admin/batik/{id}/edit', [BatikController::class, 'updateDashboard'])->name('batik.edit');
+Route::put('/update/{id}', [BatikController::class, 'update'])->name('batik.update');
+
+//AdminQuiz
+Route::get('/admin/quiz', [QuizController::class, 'index'])->name('quiz.manage');
+Route::get('/quiz/create', function() {
+    return view('create-quiz');
+})->name('quiz.create');
+Route::post('admin/quiz', [QuizController::class, 'create'])->name('quiz.store');
+Route::get('/quiz/{id}/edit', [QuizController::class, 'edit'])->name('quiz.edit');
+Route::post('/quiz/{id}/update', [QuizController::class, 'update'])->name('quiz.update');
+Route::delete('/quiz/{id}', [QuizController::class, 'delete'])->name('quiz.delete');
