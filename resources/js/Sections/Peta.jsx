@@ -378,7 +378,7 @@ const Peta = ({ batiks = [] }) => {
                                             {batik.name}
                                         </p>
                                         <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-vidaloka mb-4 sm:mb-6 lg:mb-8">
-                                            {batik.city}, {batik.province}
+                                            {batik.city}, {batik.province_name}
                                         </p>
                                         <button
                                             className="cursor-pointer px-2 py-2 rounded-xl text-white bg-[#E4676C] text-sm sm:text-base md:text-lg"
@@ -394,7 +394,7 @@ const Peta = ({ batiks = [] }) => {
                             {batiks.length > 3 && (
                                 <div className="text-center mb-5">
                                     <button
-                                        className="text-base bg-[#f9d5b6] px-3 py-2 lg:text-2xl md:text-xl rounded-xl font-vidaloka"
+                                        className="text-base font-light text-white bg-[#E4676C] px-3 py-2 lg:text-2xl md:text-xl rounded-xl font-sofiasans"
                                         onClick={() => {
                                             router.get(
                                                 `/catalog?page=1&provinsi=&pulau=${selectedPulau.id}`

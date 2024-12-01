@@ -51,7 +51,7 @@ const Hero = ({ onExploreClick }) => {
     };
 
     return (
-        <section className="w-full relative md:mt-20 lg:mt-32">
+        <section className="w-full relative md:mt-20 lg:mt-32 pt-14">
             {/* Overlay dengan efek blur di bagian atas */}
             <motion.div
                 initial="hidden"

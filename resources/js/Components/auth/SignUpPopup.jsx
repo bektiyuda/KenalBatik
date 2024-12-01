@@ -13,7 +13,7 @@ const SignUpPopup = ({ onClose, onSignUpSuccess }) => {
     });
 
     const [errorMessage, setErrorMessage] = useState("");
-     const [successMessage, setSuccessMessage] = useState("");
+    const [successMessage, setSuccessMessage] = useState("");
 
     const handleChange = (e) => {
         setFormData({

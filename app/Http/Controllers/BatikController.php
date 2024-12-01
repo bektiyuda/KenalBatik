@@ -16,11 +16,24 @@ class BatikController extends Controller
    public function index(Request $request)
 {
     $islandId = $request->query('pulau');
-    $batiks = Batik::all(); // Contoh data
+    
+    // Query untuk mengambil data batik beserta provinsi dan pulau
+    $query = DB::table('batiks')
+        ->join('provinces', 'batiks.provinceId', '=', 'provinces.id')
+        ->join('islands', 'batiks.islandId', '=', 'islands.id')
+        ->select(
+            'batiks.*',
+            'provinces.name as province_name',
+            'islands.name as island_name'
+        );
 
+    // Jika ada filter berdasarkan pulau
     if ($islandId) {
-            $batiks = Batik::where('islandId', $islandId)->get();;
-        }
+        $query->where('batiks.islandId', $islandId);
+    }
+
+    $batiks = $query->get();
+
     $authToken = session('authToken');
 
     return Inertia::render('Homepage', [
@@ -28,6 +41,7 @@ class BatikController extends Controller
         'authToken' => $authToken,
     ]);
 }
+
 
     public function tes()
     {
