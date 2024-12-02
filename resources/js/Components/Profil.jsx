@@ -37,7 +37,7 @@ const Profil = ({ onLogout }) => {
             {
                 onSuccess: () => {
                     console.log("Berhasil logout");
-                    onLogout(); // Update state di parent jika diperlukan
+                    onLogout();
                 },
                 onError: (errors) => {
                     console.error("Error saat logout:", errors);
@@ -118,7 +118,9 @@ const Profil = ({ onLogout }) => {
                     <div className="mt-3 bg-[#ffdfad] grid grid-cols-3 p-3 rounded-2xl text-center">
                         <div className="text-black">
                             <p className="text-xs sm:text-sm">Soal Terjawab</p>
-                            <p className="text-lg md:text-2xl font-semibold">{totalQuiz}</p>
+                            <p className="text-lg md:text-2xl font-semibold">
+                                {totalQuiz}
+                            </p>
                         </div>
                         <div className="text-black">
                             <p className="text-xs sm:text-sm">Jawaban Benar</p>
@@ -130,7 +132,9 @@ const Profil = ({ onLogout }) => {
                             <p className="text-xs sm:text-sm">
                                 Akurasi Jawaban
                             </p>
-                            <p className="text-lg md:text-2xl font-semibold">{accuracy}%</p>
+                            <p className="text-lg md:text-2xl font-semibold">
+                                {accuracy}%
+                            </p>
                         </div>
                     </div>
 
@@ -139,7 +143,7 @@ const Profil = ({ onLogout }) => {
                             onClick={() =>
                                 (window.location.href = "/admin/batik")
                             }
-                            className="bg-blue-500 text-white px-4 py-2 mt-3 rounded-lg w-full"
+                            className="bg-blue-500 text-white px-4 py-2 mt-3 rounded-lg w-full transition duration-300 ease-in-out hover:bg-blue-700"
                         >
                             Dashboard Admin
                         </button>
@@ -147,7 +151,7 @@ const Profil = ({ onLogout }) => {
 
                     <button
                         onClick={handleLogout}
-                        className="bg-red-500 text-white px-4 py-2 mt-3 rounded-lg w-full"
+                        className="bg-red-500 text-white px-4 py-2 mt-3 rounded-lg w-full transition duration-300 ease-in-out hover:bg-red-600"
                     >
                         Logout
                     </button>

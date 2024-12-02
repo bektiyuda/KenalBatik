@@ -308,10 +308,10 @@ const Peta = ({ batiks = [] }) => {
                         ].map((pulau) => (
                             <span
                                 key={pulau.id}
-                                className={`cursor-pointer mx-3 font-sofiasans ${
+                                className={`cursor-pointer mx-3 font-sofiasans transition duration-300 ease-in-out ${
                                     selectedPulau?.name === pulau.name
                                         ? "text-red-600"
-                                        : "text-gray-700"
+                                        : "text-gray-700 hover:text-red-400"
                                 }`}
                                 onClick={() =>
                                     handlePulauClick(pulau.name, pulau.id)
