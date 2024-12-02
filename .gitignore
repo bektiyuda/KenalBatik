@@ -20,3 +20,5 @@ yarn-error.log
 /.idea
 /.vscode
 /.zed
+/resources/js/Pages/profile.jsx
+/resources/views/login.blade.php
