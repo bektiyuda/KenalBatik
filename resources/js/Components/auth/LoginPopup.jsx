@@ -62,6 +62,7 @@ const LoginPopup = ({
 
     const handleGoogleLogin = async () => {
         try {
+            window.location.href = "/auth/google/redirect";
             const response = await axios.get("/api/users/oauth");
 
             const redirectUrl = response.data.data.redirect_link;

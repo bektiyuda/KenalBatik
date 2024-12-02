@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Socialite\Facades\Socialite;
 use Inertia\Inertia;
 
 class UserController extends Controller
@@ -29,30 +30,30 @@ class UserController extends Controller
         return redirect()->route('Homepage');
     }
 
-  public function authenticate(Request $request)
-{
-    $request->validate([
-        'email' => 'required|email',
-        'password' => 'required|string',
-    ]);
+    public function authenticate(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string',
+        ]);
 
-    $credentials = $request->only('email', 'password');
+        $credentials = $request->only('email', 'password');
 
-    if (Auth::attempt($credentials)) {
-        $request->session()->regenerate();
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
 
-        $user = Auth::user();
-        $token = base64_encode(Hash::make($user->email . now()));
+            $user = Auth::user();
+            $token = base64_encode(Hash::make($user->email . now()));
 
-        session(['authToken' => $token]);
+            session(['authToken' => $token]);
 
-         return redirect()->route('Homepage');
+            return redirect()->route('Homepage');
+        }
+
+        return back()->withErrors([
+            'email' => 'Email atau kata sandi salah',
+        ]);
     }
-
-    return back()->withErrors([
-        'email' => 'Email atau kata sandi salah',
-    ]);
-}
 
     public function profile()
     {
@@ -102,5 +103,41 @@ class UserController extends Controller
         ];
 
         return response()->json($response);
+    }
+
+    public function redirectToGoogle()
+    {
+        return Socialite::driver('google')->redirect();
+    }
+
+    public function handleGoogleCallback()
+    {
+        try {
+            // Ambil informasi user dari Google
+            $googleUser = Socialite::driver('google')->stateless()->user();
+
+            // Cari user berdasarkan email atau buat user baru
+            $user = User::firstOrCreate(
+                ['email' => $googleUser->getEmail()],
+                [
+                    'username' => $googleUser->getName(),
+                    'password' => bcrypt('google-default-password'), // Password dummy
+                ]
+            );
+
+            // Login user
+            Auth::login($user);
+
+            $user = Auth::user();
+            $token = base64_encode(Hash::make($user->email . now()));
+
+            session(['authToken' => $token]);
+
+            // Redirect ke halaman profile
+            return redirect()->route('Homepage')->with('success', 'Login menggunakan Google berhasil!');
+        } catch (\Exception $e) {
+            // Jika terjadi error
+            return redirect('/')->withErrors(['error' => 'Gagal login menggunakan Google.']);
+        }
     }
 }

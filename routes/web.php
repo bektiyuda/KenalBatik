@@ -117,3 +117,7 @@ Route::post('admin/quiz', [QuizController::class, 'create'])->middleware(Authent
 Route::get('/quiz/{id}/edit', [QuizController::class, 'edit'])->middleware(AuthenticationAdmin::class)->name('quiz.edit');
 Route::post('/quiz/{id}/update', [QuizController::class, 'update'])->middleware(AuthenticationAdmin::class)->name('quiz.update');
 Route::delete('/quiz/{id}', [QuizController::class, 'delete'])->middleware(AuthenticationAdmin::class)->name('quiz.delete');
+
+//Google Login
+Route::get('/auth/google/redirect', [UserController::class, 'redirectToGoogle'])->name('google.redirect');
+Route::get('/auth/google/callback', [UserController::class, 'handleGoogleCallback'])->name('google.callback');
