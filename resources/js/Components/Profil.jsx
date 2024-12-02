@@ -28,7 +28,7 @@ const Profil = ({ onLogout }) => {
     const totalQuiz = parseInt(userData?.total_quiz || 0);
     const totalCorrectAnswer = parseInt(userData?.total_correct_answer || 0);
     const accuracy =
-        totalQuiz > 0 ? ((totalCorrectAnswer / totalQuiz) * 100) : 0;
+        totalQuiz > 0 ? ((totalCorrectAnswer / totalQuiz) * 100).toFixed(2) : 0;
 
     const handleLogout = () => {
         router.post(

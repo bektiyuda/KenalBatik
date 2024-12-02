@@ -21,7 +21,7 @@ const Navbar = ({ onLoginClick, onLogout, response }) => {
 
     useEffect(() => {
         
-        const tokenExists = !!localStorage.getItem("authToken");
+        const tokenExists = !!auth;
         console.log("ini di navbar: ", auth);
         const isUserLoggedIn = auth?.user ? true : false;
         setIsAuthenticated(tokenExists && isUserLoggedIn);
