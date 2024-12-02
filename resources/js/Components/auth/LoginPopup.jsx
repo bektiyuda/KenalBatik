@@ -23,38 +23,36 @@ const LoginPopup = ({
         });
     };
 
-  const handleSubmit = (e) => {
-      e.preventDefault();
+    const handleSubmit = (e) => {
+        e.preventDefault();
 
-      console.log("Submitting form with data:", formData); // Log data untuk debugging
+        console.log("Submitting form with data:", formData); // Log data untuk debugging
 
-      router.post(
-          "/login", // Endpoint login
-          { email: formData.email, password: formData.password }, // Data login
-          {
-              onSuccess: (page) => {
-                  // Ambil token dari response props
-                  const token = page.props.authToken; // Pastikan respons backend mengembalikan authToken
-                  if (token) {
-                      localStorage.setItem("authToken", token); // Simpan token ke localStorage
-                      onLogin(token); // Panggil handler untuk memperbarui state
-                      window.location.reload();
-                  } else {
-                      setErrorMessage(
-                          "Login berhasil, tetapi token tidak diterima."
-                      );
-                  }
-                  onClose(); // Tutup popup login
-              },
-              onError: (errors) => {
-                  // Tampilkan pesan error
-                  setErrorMessage(errors.email || "Login gagal. Coba lagi.");
-              },
-          }
-      );
-  };
-
-
+        router.post(
+            "/login", // Endpoint login
+            { email: formData.email, password: formData.password }, // Data login
+            {
+                onSuccess: (page) => {
+                    // Ambil token dari response props
+                    const token = page.props.authToken; // Pastikan respons backend mengembalikan authToken
+                    if (token) {
+                        localStorage.setItem("authToken", token); // Simpan token ke localStorage
+                        onLogin(token); // Panggil handler untuk memperbarui state
+                        window.location.reload();
+                    } else {
+                        setErrorMessage(
+                            "Login berhasil, tetapi token tidak diterima."
+                        );
+                    }
+                    onClose(); // Tutup popup login
+                },
+                onError: (errors) => {
+                    // Tampilkan pesan error
+                    setErrorMessage(errors.email || "Login gagal. Coba lagi.");
+                },
+            }
+        );
+    };
 
     const handleOverlayClick = (e) => {
         if (e.target.id === "overlay") {
@@ -64,13 +62,10 @@ const LoginPopup = ({
 
     const handleGoogleLogin = async () => {
         try {
-            // Panggil API OAuth login untuk mendapatkan URL redirect
             const response = await axios.get("/api/users/oauth");
 
-            // Dapatkan URL redirect dari response
             const redirectUrl = response.data.data.redirect_link;
 
-            // Redirect pengguna ke URL yang dikembalikan oleh API
             window.location.href = redirectUrl;
         } catch (error) {
             console.error("Error during Google OAuth login:", error.message);
@@ -155,6 +150,7 @@ const LoginPopup = ({
 
                             <div className="flex items-center justify-between">
                                 <button
+                                    type="button"
                                     onClick={onForgotPasswordClick}
                                     className="text-sm text-gray-600 hover:underline"
                                 >
