@@ -22,6 +22,7 @@ const Navbar = ({ onLoginClick, onLogout, response }) => {
     useEffect(() => {
         // Cek login berdasarkan token dan shared props
         const tokenExists = !!localStorage.getItem("authToken");
+        console.log("ini di navbar: ", auth);
         const isUserLoggedIn = auth?.user ? true : false;
         setIsAuthenticated(tokenExists && isUserLoggedIn); // Login jika token dan user ada
     }, [auth]);

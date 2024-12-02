@@ -64,14 +64,7 @@ const LoginPopup = ({
 
     const handleGoogleLogin = async () => {
         try {
-            // Panggil API OAuth login untuk mendapatkan URL redirect
-            const response = await axios.get("/api/users/oauth");
-
-            // Dapatkan URL redirect dari response
-            const redirectUrl = response.data.data.redirect_link;
-
-            // Redirect pengguna ke URL yang dikembalikan oleh API
-            window.location.href = redirectUrl;
+            window.location.href = "/auth/google/redirect";
         } catch (error) {
             console.error("Error during Google OAuth login:", error.message);
             setErrorMessage("Gagal mengarahkan ke Google untuk login.");
