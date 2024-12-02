@@ -14,7 +14,7 @@ function Kuis() {
     const [userAnswers, setUserAnswers] = useState([]);
     const [isQuizCompleted, setIsQuizCompleted] = useState(false);
     const [quizResult, setQuizResult] = useState(null);
-    const [timeLeft, setTimeLeft] = useState(5 * 60);
+    const [timeLeft, setTimeLeft] = useState(1 * 60);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [userData, setUserData] = useState(null);
     const [isSignUpOpen, setIsSignUpOpen] = useState(false);
@@ -59,11 +59,13 @@ function Kuis() {
         setIsLoginOpen(false);
     };
 
-
-
     useEffect(() => {
-        if (timeLeft === 0) {
-            setIsQuizCompleted(true); 
+        if (timeLeft === 0 && !isQuizCompleted) {
+            // Set flag quiz selesai
+            setIsQuizCompleted(true);
+
+            // Kirim jawaban pengguna
+            submitAnswers(userAnswers);
         }
 
         const timer =
@@ -72,7 +74,7 @@ function Kuis() {
             setInterval(() => setTimeLeft(timeLeft - 1), 1000);
 
         return () => clearInterval(timer);
-    }, [timeLeft, isQuizCompleted]);
+    }, [timeLeft, isQuizCompleted, userAnswers]);
 
     const formatTime = (seconds) => {
         const minutes = Math.floor(seconds / 60);
@@ -99,9 +101,18 @@ function Kuis() {
     };
 
     const submitAnswers = (answers) => {
+        const filledAnswers = quizData.map((quiz, index) => {
+            return (
+                answers[index] || {
+                    quiz_id: quiz.id,
+                    user_answer: null, // Jawaban kosong jika pengguna tidak menjawab
+                }
+            );
+        });
+
         const payload = {
-            QuizID: answers.map((answer) => answer.quiz_id),
-            UserAnswer: answers.map((answer) => answer.user_answer),
+            QuizID: filledAnswers.map((answer) => answer.quiz_id),
+            UserAnswer: filledAnswers.map((answer) => answer.user_answer),
         };
 
         axios
@@ -111,15 +122,22 @@ function Kuis() {
 
                 setQuizResult(data);
                 setTimeout(() => {
-                    setIsQuizCompleted(true); // Selesai memeriksa
-                    setIsCheckingAnswers(false); // Sembunyikan loading
-                }, 2000); // Simulasi delay
+                    setIsCheckingAnswers(false); 
+                }, 2000);
             })
             .catch((error) => {
                 console.error("Error submitting quiz answers:", error);
-                setIsCheckingAnswers(false); // Sembunyikan loading jika gagal
+                setIsCheckingAnswers(false);
             });
     };
+
+    const getAnsweredQuestionsCount = () => {
+        return userAnswers.filter(
+            (answer) => answer && answer.user_answer !== null
+        ).length;
+    };
+
+
 
     return (
         <div className="w-full relative">
@@ -304,10 +322,10 @@ function Kuis() {
                                 <div className="flex justify-around w-full mt-10 gap-6 bg-[#FFDFAD61] lg:mb-16 rounded-3xl p-7 font-vidaloka">
                                     <div className="text-center">
                                         <p className="text-base md:text-lg text-start font-semibold mb-2">
-                                            Banyak Soal
+                                            Soal Terjawab
                                         </p>
                                         <p className="text-start text-4xl md:text-5xl">
-                                            5
+                                            {getAnsweredQuestionsCount()}
                                         </p>
                                     </div>
                                     <div className="text-center">
