@@ -67,7 +67,7 @@ const PreQuiz = () => {
     const handleQuizClick = () => {
         const token = localStorage.getItem("authToken");
 
-        if (!token) {
+        if (token) {
             alert("Anda harus login untuk mengakses kuis.");
             setIsLoginOpen(true);
             return;

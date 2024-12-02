@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { router } from "@inertiajs/react";
+import { router, usePage } from "@inertiajs/react";
 import { motion } from "framer-motion";
 import heroImage from "../Assets/mascoot.png";
 import backgroundImage from "../Assets/background-hero.png";
@@ -15,10 +15,11 @@ import bubleTail from "../Assets/hero/bubbletail.svg";
 import ConfirmationPopup from "../Components/ConfirmationPopup";
 
 const Hero = ({ onExploreClick }) => {
+    const { auth } = usePage().props;
     const [showPopup, setShowPopup] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     
-    const token = localStorage.getItem("authToken");
+    const token = auth.user;
 
     useEffect(() => {
         setIsLoggedIn(!!token);
@@ -26,6 +27,7 @@ const Hero = ({ onExploreClick }) => {
 
     const handleQuizClick = () => {
         console.log(token);
+        console.log(isLoggedIn);
         if (!isLoggedIn) {
             setShowPopup(true);
         } else {

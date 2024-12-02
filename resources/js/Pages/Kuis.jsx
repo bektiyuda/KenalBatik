@@ -14,7 +14,7 @@ function Kuis() {
     const [userAnswers, setUserAnswers] = useState([]);
     const [isQuizCompleted, setIsQuizCompleted] = useState(false);
     const [quizResult, setQuizResult] = useState(null);
-    const [timeLeft, setTimeLeft] = useState(1 * 60);
+    const [timeLeft, setTimeLeft] = useState(5 * 60);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [userData, setUserData] = useState(null);
     const [isSignUpOpen, setIsSignUpOpen] = useState(false);
@@ -23,7 +23,7 @@ function Kuis() {
     const [isCheckingAnswers, setIsCheckingAnswers] = useState(false);
 
 
-    useEffect(() => {
+    useEffect(() => {   
         console.log(quizData);
         const token = localStorage.getItem("authToken");
         if (token) {

@@ -1,14 +1,17 @@
 import { useState } from "react";
-import { router } from "@inertiajs/react";
+import { router, usePage } from "@inertiajs/react";
 import { motion } from "framer-motion";
 import ConfirmationPopup from "../Components/ConfirmationPopup";
 import backgroundImage from "../assets/background-introkuis.png";
 
 const IntroQuiz = ({ isLoggedIn }) => {
+    const { auth } = usePage().props;
+    const token = auth.user;
     const [showPopup, setShowPopup] = useState(false);
 
     const handleQuizClick = () => {
-        if (!isLoggedIn) {
+        if (!token) {
+            console.log(token);
             setShowPopup(true);
         } else {
             router.visit("/prequiz");
