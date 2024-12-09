@@ -121,6 +121,7 @@ function Kuis() {
                 const data = response.data;
 
                 setQuizResult(data);
+                console.log("ini kuis result", data);
                 setTimeout(() => {
                     setIsCheckingAnswers(false); 
                 }, 2000);
