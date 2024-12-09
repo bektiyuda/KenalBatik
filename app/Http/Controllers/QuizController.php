@@ -75,13 +75,14 @@ class QuizController extends Controller
                         break;
                     case 'Hard':
                         $user->experience += 7;
-                        if($user->experience > 100) {
-                            $user->experience = 100;
-                        }
                         break;
-                        }
                     }
+                }
             }
+        }
+
+        if($user->experience > 100) {
+            $user->experience = 100;
         }
 
         UserAnswer::create([
