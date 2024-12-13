@@ -80,13 +80,13 @@ const Hero = ({ onExploreClick }) => {
                                 <div className="flex justify-start gap-4 my-8 font-sofiasans">
                                     <button
                                         onClick={handleQuizClick}
-                                        className="bg-[#e4666c] text-white px-3 py-3 rounded-xl text-[14px] md:text-[16px] shadow-lg"
+                                        className="bg-[#e4666c] text-white px-3 py-3 rounded-xl text-[14px] md:text-[16px] shadow-lg transition duration-300 ease-in-out hover:bg-red-500"
                                     >
                                         Belajar Lewat Kuis Seru!
                                     </button>
                                     <button
                                         onClick={onExploreClick}
-                                        className="bg-white text-[14px] md:text-[16px] px-3 py-3 rounded-xl shadow-lg"
+                                        className="bg-white text-[14px] md:text-[16px] px-3 py-3 rounded-xl shadow-lg transition duration-300 ease-in-out hover:bg-[#eeeded]"
                                     >
                                         Mulai Eksplorasi!
                                     </button>

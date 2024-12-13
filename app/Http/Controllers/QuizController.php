@@ -54,8 +54,14 @@ class QuizController extends Controller
 
         $correctAnswer = 0;
 
+        //Membuat variabel array
+        $quizUser = array();
+
         for ($i = 0; $i < count($quizId); $i++) {
             $quiz = Quiz::find($quizId[$i]);
+            $quizUser[$i] = $quiz;
+            $quizUser[$i]->user_answer = $answer[$i];
+
             if ($quiz->answer == $answer[$i]) {
                 $correctAnswer++;
 
@@ -69,13 +75,14 @@ class QuizController extends Controller
                         break;
                     case 'Hard':
                         $user->experience += 7;
-                        if($user->experience > 100) {
-                            $user->experience = 100;
-                        }
                         break;
-                        }
                     }
+                }
             }
+        }
+
+        if($user->experience > 100) {
+            $user->experience = 100;
         }
 
         UserAnswer::create([
@@ -151,6 +158,7 @@ class QuizController extends Controller
             'current_correct_answer' => $correctAnswer,
             'total_quiz' => count($userProfile) * 5,
             'total_correct_answer' => $totalCorrectAnswer,
+            'all_quiz' => $quizUser,
         ];
 
         $uji = "NGETES AJA";

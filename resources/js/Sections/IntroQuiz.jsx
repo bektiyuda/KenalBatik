@@ -60,7 +60,7 @@ const IntroQuiz = ({ isLoggedIn }) => {
                     <div className="flex mt-5">
                         <button
                             onClick={handleQuizClick}
-                            className="bg-[#e4666c] md:text-xl text-lg text-white px-5 py-2 md:px-6 rounded-xl shadow-lg z-30"
+                            className="bg-[#e4666c] md:text-xl text-lg text-white px-5 py-2 md:px-6 rounded-xl shadow-lg z-30 transition duration-300 ease-in-out hover:bg-red-500"
                         >
                             Mulai Kuis
                         </button>

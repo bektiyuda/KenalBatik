@@ -22,8 +22,7 @@ function Kuis() {
     const [isLoginOpen, setIsLoginOpen] = useState(false);
     const [isCheckingAnswers, setIsCheckingAnswers] = useState(false);
 
-
-    useEffect(() => {   
+    useEffect(() => {
         console.log(quizData);
         const token = localStorage.getItem("authToken");
         if (token) {
@@ -48,23 +47,21 @@ function Kuis() {
     const handleLogout = () => {
         setIsLoggedIn(false);
         setUserData(null);
-        localStorage.removeItem("authToken"); 
-        window.location.reload(); 
+        localStorage.removeItem("authToken");
+        window.location.reload();
     };
 
     const handleLogin = (token) => {
         localStorage.setItem("authToken", token);
         setIsLoggedIn(true);
-        fetchUserProfile(token); 
+        fetchUserProfile(token);
         setIsLoginOpen(false);
     };
 
     useEffect(() => {
         if (timeLeft === 0 && !isQuizCompleted) {
-            // Set flag quiz selesai
             setIsQuizCompleted(true);
 
-            // Kirim jawaban pengguna
             submitAnswers(userAnswers);
         }
 
@@ -105,7 +102,7 @@ function Kuis() {
             return (
                 answers[index] || {
                     quiz_id: quiz.id,
-                    user_answer: null, // Jawaban kosong jika pengguna tidak menjawab
+                    user_answer: null,
                 }
             );
         });
@@ -121,8 +118,9 @@ function Kuis() {
                 const data = response.data;
 
                 setQuizResult(data);
+                console.log("ini kuis result", data);
                 setTimeout(() => {
-                    setIsCheckingAnswers(false); 
+                    setIsCheckingAnswers(false);
                 }, 2000);
             })
             .catch((error) => {
@@ -136,8 +134,6 @@ function Kuis() {
             (answer) => answer && answer.user_answer !== null
         ).length;
     };
-
-
 
     return (
         <div className="w-full relative">
@@ -233,7 +229,6 @@ function Kuis() {
                         )}
                     </div>
                 ) : isCheckingAnswers ? (
-                    // Animasi Loading
                     <div className="flex flex-col items-center justify-center min-h-screen">
                         <div className="text-2xl font-bold mb-4">
                             Memeriksa jawaban...
@@ -407,6 +402,91 @@ function Kuis() {
                                         );
                                     }
                                 })()}
+                            </div>
+                        </div>
+
+                        <div className="px-4 sm:px-8 md:px-16 lg:px-32">
+                            <div className="bg-[#feecda] flex flex-col items-center p-4 sm:p-6 md:p-8 rounded-3xl shadow-lg">
+                                <h2 className="text-2xl sm:text-3xl font-vidaloka font-bold mb-4 sm:mb-6">
+                                    Hasil Kuis
+                                </h2>
+                                <div className="w-full space-y-6 sm:space-y-8">
+                                    {quizData.map((quiz, index) => {
+                                        const userAnswer =
+                                            userAnswers[index]?.user_answer;
+                                        const correctAnswer = quiz.answer;
+
+                                        return (
+                                            <div
+                                                key={quiz.id}
+                                                className="w-full mx-auto shadow-lg p-4 sm:p-6 flex flex-col md:flex-row gap-6 md:gap-10 justify-between rounded-3xl md:items-start bg-[#F7F2ED]"
+                                            >
+                                                {/* Bagian Pertanyaan */}
+                                                <div className="w-full md:w-1/2 flex flex-col justify-center items-start">
+                                                    <div className="flex justify-between w-full mb-2 sm:mb-4 text-base sm:text-lg md:text-xl lg:text-2xl">
+                                                        <span>
+                                                            Pertanyaan{" "}
+                                                            {index + 1}
+                                                        </span>
+                                                    </div>
+                                                    <div className="w-full border-[0.5px] border-black/50 mb-2 sm:mb-4"></div>
+                                                    <h2 className="font-vidaloka tracking-wider text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold mb-4 sm:mb-6">
+                                                        {quiz.question}
+                                                    </h2>
+                                                </div>
+
+                                                {/* Bagian Jawaban */}
+                                                <div className="w-full md:w-1/2 flex flex-col justify-center items-center">
+                                                    <div className="grid grid-cols-1 gap-4 w-full">
+                                                        {[
+                                                            "A",
+                                                            "B",
+                                                            "C",
+                                                            "D",
+                                                        ].map((option) => {
+                                                            const isCorrectOption =
+                                                                option ===
+                                                                correctAnswer;
+                                                            const isUserSelected =
+                                                                option ===
+                                                                userAnswer;
+
+                                                            return (
+                                                                <button
+                                                                    key={option}
+                                                                    className={`font-vidaloka border border-[#f8a071] rounded-full text-sm sm:text-lg md:text-2xl lg:text-4xl py-2 px-4 w-full ${
+                                                                        isUserSelected
+                                                                            ? isCorrectOption
+                                                                                ? "bg-[#1DCE73] text-white"
+                                                                                : "bg-red-500 text-white"
+                                                                            : isCorrectOption
+                                                                            ? "bg-[#1DCE73] text-white"
+                                                                            : "bg-[#f8a071]/30 text-black"
+                                                                    }`}
+                                                                    disabled
+                                                                >
+                                                                    {
+                                                                        quiz[
+                                                                            `option${option}`
+                                                                        ]
+                                                                    }
+                                                                </button>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                            <div className="flex justify-center my-10">
+                                <button
+                                    className="bg-[#e4666c] text-white px-3 py-3 rounded-xl text-[14px] md:text-[16px] shadow-lg transition duration-300 ease-in-out hover:bg-red-500"
+                                    onClick={() => (window.location.href = "/")}
+                                >
+                                    Kembali ke Halaman Utama
+                                </button>
                             </div>
                         </div>
                     </div>

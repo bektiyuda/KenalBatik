@@ -1,4 +1,4 @@
-import { router } from "@inertiajs/react";
+import { usePage } from "@inertiajs/react";
 import Navbar from "../Components/Navbar";
 import quizCard1 from "../Assets/quizcard1.png";
 import quizCard2 from "../Assets/quizcard2.png";
@@ -9,19 +9,13 @@ import axios from "axios";
 import ForgotPasswordPopup from "../Components/auth/ForgotPasswordPopup";
 
 const PreQuiz = () => {
+    const { auth } = usePage().props;
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [userData, setUserData] = useState(null); // Menyimpan data pengguna
+    const [userData, setUserData] = useState(null); 
     const [isLoginOpen, setIsLoginOpen] = useState(false);
     const [isSignUpOpen, setIsSignUpOpen] = useState(false);
     const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
-
-    useEffect(() => {
-        const token = localStorage.getItem("authToken");
-        if (token) {
-            setIsLoggedIn(true);
-            fetchUserProfile(token); // Panggil fungsi untuk memuat profil
-        }
-    }, []);
+    
 
     const fetchUserProfile = async (token) => {
         try {
@@ -65,15 +59,14 @@ const PreQuiz = () => {
     };
 
     const handleQuizClick = () => {
-        const token = localStorage.getItem("authToken");
+        const token = auth.user;
 
-        if (token) {
+        if (!token) {
             alert("Anda harus login untuk mengakses kuis.");
             setIsLoginOpen(true);
             return;
         }
 
-        // Navigasi ke halaman kuis
         window.location.href = "/kuis";
     };
 
