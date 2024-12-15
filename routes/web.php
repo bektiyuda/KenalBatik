@@ -121,3 +121,7 @@ Route::delete('/quiz/{id}', [QuizController::class, 'delete'])->middleware(Authe
 //Google Login
 Route::get('/auth/google/redirect', [UserController::class, 'redirectToGoogle'])->name('google.redirect');
 Route::get('/auth/google/callback', [UserController::class, 'handleGoogleCallback'])->name('google.callback');
+
+//Forgot Password
+Route::post('/auth/send-verification-code', [UserController::class, 'sendVerificationCode']);
+Route::post('/auth/reset-password', [UserController::class, 'resetPassword']);
