@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Support\Str;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\VerificationCodeMail;
 use Inertia\Inertia;
 
 class UserController extends Controller
@@ -139,5 +143,52 @@ class UserController extends Controller
             // Jika terjadi error
             return redirect('/')->withErrors(['error' => 'Gagal login menggunakan Google.']);
         }
+    }
+
+    public function sendVerificationCode(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users,email',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        $token = Str::random(8);
+        $expiryTime = Carbon::now()->addMinutes(15);
+
+        $user->update([
+            'forgotPasswordToken' => $token,
+            'forgotPasswordTokenExpired' => $expiryTime,
+        ]);
+
+        Mail::to($user->email)->send(new VerificationCodeMail($token));
+
+        return response()->json(['message' => 'Kode verifikasi telah dikirim ke email Anda.']);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users,email',
+            'verificationCode' => 'required|string',
+            'newPassword' => 'required|string|min:6|confirmed',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (
+            $user->forgotPasswordToken !== $request->verificationCode ||
+            Carbon::now()->greaterThan($user->forgotPasswordTokenExpired)
+        ) {
+            return response()->json(['error' => 'Kode verifikasi tidak valid atau telah kedaluwarsa.'], 422);
+        }
+
+        $user->update([
+            'password' => Hash::make($request->newPassword),
+            'forgotPasswordToken' => '',
+            'forgotPasswordTokenExpired' => '00:00:00',
+        ]);
+
+        return response()->json(['message' => 'Kata sandi berhasil diatur ulang.']);
     }
 }
