@@ -13,42 +13,29 @@ export default function ForgotPasswordPopup({ onClose }) {
 
     const handleSendCode = async () => {
         try {
-            const response = await axios.post(
-                "https://your-backend-url.com/auth/send-verification-code",
-                {
-                    email,
-                }
-            );
+            const response = await axios.post("/auth/send-verification-code", { email });
             console.log("Verification code sent:", response.data);
             setError("");
         } catch (error) {
             setError("Gagal mengirim kode verifikasi. Cek kembali email Anda.");
-            console.error(
-                "Error sending code:",
-                error.response ? error.response.data : error.message
-            );
+            console.error("Error sending code:", error.response ? error.response.data : error.message);
         }
     };
-
+    
     const handleResetPassword = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post(
-                "https://your-backend-url.com/auth/reset-password",
-                {
-                    email,
-                    verificationCode,
-                    newPassword,
-                }
-            );
+            const response = await axios.post("/auth/reset-password", {
+                email,
+                verificationCode,
+                newPassword,
+                newPassword_confirmation: newPassword,
+            });
             console.log("Password reset successful:", response.data);
-            onClose(); // Tutup modal setelah berhasil reset password
+            onClose();
         } catch (error) {
             setError("Gagal mereset password. Pastikan kode verifikasi benar.");
-            console.error(
-                "Error resetting password:",
-                error.response ? error.response.data : error.message
-            );
+            console.error("Error resetting password:", error.response ? error.response.data : error.message);
         }
     };
 
